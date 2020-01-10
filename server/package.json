@@ -1,0 +1,25 @@
+{
+    "name": "rc-scanner-server",
+    "version": "0.9.1",
+    "private": true,
+    "main": "index.js",
+    "scripts": {
+        "list-audio": "node lib/rc-scanner/get-devices.js",
+        "start": "nodemon index"
+    },
+    "author": "Chrystian Huot",
+    "license": "LICENSE",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "helmet": "^3.21.2",
+        "naudiodon": "^2.1.2",
+        "nodemon": "^2.0.2",
+        "serialport": "^8.0.6",
+        "ws": "^7.2.1"
+    },
+    "devDependencies": {
+        "eslint": "^6.8.0"
+    }
+}

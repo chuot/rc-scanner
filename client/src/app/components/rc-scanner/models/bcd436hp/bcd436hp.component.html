@@ -1,0 +1,192 @@
+<div [ngClass]="{ 'dimmer-low': dimmer === 1, 'dimmer-middle': dimmer === 2, 'dimmer-high': dimmer === 3 }">
+    <div class="led" [ngClass]="led"></div>
+    <div (dblclick)="toggleFullscreen()">
+        <div *ngIf="!powerOn" class="display">
+            <span class="large">Press Power</span>
+        </div>
+        <div *ngIf="powerOn" class="display">
+            <div *ngFor="let line of display; index as i" [ngClass]="{ large: line.size === 1, small: line.size === 0}">
+                <span *ngFor="let char of line.text; index as j"
+                    [ngClass]="{ reverse: line.mode[j] === '*', underline: line.mode[j] === '_' }">{{ char }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="control" fxLayout="column">
+        <div class="button-group-1" fxLayout="row">
+            <div fxFlex="25%" fxLayout="column">
+                <div class="button-wrapper" fxFlex="50%" fxLayout="column">
+                    <button class="button" (click)="onFunction()" fxLayout="column" fxLayoutAlign="center center">
+                        <span>FUNC</span>
+                    </button>
+                </div>
+                <div class="button-wrapper" fxFlex="50%" fxLayout="column">
+                    <button class="button" (click)="onMenu()" fxLayout="column" fxLayoutAlign="center center">
+                        <span>MENU</span>
+                    </button>
+                </div>
+            </div>
+            <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                <button class="button" (click)="onVfoLeft()" fxFlex="100%" fxLayout="column"
+                    fxLayoutAlign="center center">
+                    <span>VFO</span>
+                    <span>LEFT</span>
+                </button>
+            </div>
+            <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                <button class="button" (click)="onVfoPush()" fxFlex="100%" fxLayout="column"
+                    fxLayoutAlign="center center">
+                    <span>VFO</span>
+                    <span>PUSH</span>
+                </button>
+            </div>
+            <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                <button class="button" (click)="onVfoRight()" fxFlex="100%" fxLayout="column"
+                    fxLayoutAlign="center center">
+                    <span>VFO</span>
+                    <span>RIGHT</span>
+                </button>
+            </div>
+        </div>
+        <div class="button-group-2">
+            <div fxLayout="row">
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onAvoid()" fxLayout="column" fxLayoutAlign="center center">
+                        <span class="italic">AVOID</span>
+                        <svg width="18" height="18" class="icon">
+                            <path fill="currentColor"
+                                d="M8.988 0a.75.75 0 00-.738.76v1.453a.75.75 0 101.5 0V.76A.75.75 0 008.988 0zM9 3.537A5.474 5.474 0 003.538 9 5.474 5.474 0 009 14.462c2.881 0 5.25-2.254 5.445-5.087h-1.52A3.937 3.937 0 019 12.962 3.951 3.951 0 015.038 9 3.951 3.951 0 019 5.037a3.937 3.937 0 013.925 3.588h1.52C14.25 5.79 11.88 3.537 9 3.537zm0 1.94A3.534 3.534 0 005.477 9 3.534 3.534 0 009 12.523c1.809 0 3.293-1.388 3.484-3.148h-1.498A2.008 2.008 0 019 11.023 2.012 2.012 0 016.977 9c0-1.127.896-2.024 2.023-2.024.998 0 1.812.705 1.986 1.649h1.498C12.293 6.865 10.809 5.476 9 5.476zM.76 8.25a.75.75 0 100 1.5h1.454a.75.75 0 100-1.5zm15.026 0a.75.75 0 100 1.5h1.453a.75.75 0 100-1.5zm-6.798 6.775a.75.75 0 00-.738.761v1.453a.75.75 0 101.5 0v-1.453a.75.75 0 00-.762-.761z" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onDigitOne()" fxLayout="row" fxLayoutAlign="center center">
+                        <span class="digit" fxFlex="20%" fxLayoutAlign="center center">1</span>
+                        <span fxFlex="60%" fxLayoutAlign="center center">SRCH1</span>
+                    </button>
+                </div>
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onDigitTwo()" fxLayout="row" fxLayoutAlign="center center">
+                        <span class="digit" fxFlex="20%" fxLayoutAlign="center center">2</span>
+                        <span fxFlex="60%" fxLayoutAlign="center center">SRCH2</span>
+                    </button>
+                </div>
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onDigitThree()" fxLayout="row" fxLayoutAlign="center center">
+                        <span class="digit" fxFlex="20%" fxLayoutAlign="center center">3</span>
+                        <span fxFlex="60%" fxLayoutAlign="center center">SRCH3</span>
+                    </button>
+                </div>
+            </div>
+            <div fxLayout="row">
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onReplayRecord()" fxLayout="column" fxLayoutAlign="center center">
+                        <span class="italic">REPLAY</span>
+                        <span class="highlight">RECORD</span>
+                    </button>
+                </div>
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onDigitFour()" fxLayout="row" fxLayoutAlign="center center">
+                        <span class="digit" fxFlex="20%" fxLayoutAlign="center center">4</span>
+                        <span fxFlex="60%" fxLayoutAlign="center center">&lt; ATT</span>
+                    </button>
+                </div>
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button raised-dot" (click)="onDigitFive()" fxLayout="row"
+                        fxLayoutAlign="center center">
+                        <span class="digit" fxFlex="20%" fxLayoutAlign="center center">5</span>
+                        <span fxFlex="60%" fxLayoutAlign="center center"></span>
+                    </button>
+                </div>
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onDigitSix()" fxLayout="row" fxLayoutAlign="center center">
+                        <span class="digit" fxFlex="20%" fxLayoutAlign="center center">6</span>
+                        <span fxFlex="60%" fxLayoutAlign="center center">&gt; WX</span>
+                    </button>
+                </div>
+            </div>
+            <div fxLayout="row">
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onZipServices()" fxLayout="column" fxLayoutAlign="center center">
+                        <span class="italic">ZIP</span>
+                        <span class="aboveline italic">SERVICES</span>
+                    </button>
+                </div>
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onDigitSeven()" fxLayout="row" fxLayoutAlign="center center">
+                        <span class="digit" fxFlex="20%" fxLayoutAlign="center center">7</span>
+                        <span fxFlex="60%" fxLayoutAlign="center center">IFX</span>
+                    </button>
+                </div>
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onDigitEight()" fxLayout="row" fxLayoutAlign="center center">
+                        <span class="digit" fxFlex="20%" fxLayoutAlign="center center">8</span>
+                        <span fxFlex="60%" fxLayoutAlign="center center">REV</span>
+                    </button>
+                </div>
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onDigitNine()" fxLayout="row" fxLayoutAlign="center center">
+                        <span class="digit" fxFlex="20%" fxLayoutAlign="center center">9</span>
+                        <span fxFlex="60%" fxLayoutAlign="center center">DISP</span>
+                    </button>
+                </div>
+            </div>
+            <div fxLayout="row">
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onLightPower()" fxLayout="column" fxLayoutAlign="center center">
+                        <svg width="36" height="18">
+                            <path fill="currentColor"
+                                d="M7.694 5.512c.874 0 1.807.427 2.448 1.078.64.65.969 1.467.822 2.275L9.294 16.5h-3.2L4.422 8.84c-.172-.788.146-1.59.795-2.242.648-.653 1.606-1.086 2.478-1.086zm0-1.5c-1.34 0-2.623.603-3.543 1.53-.92.925-1.495 2.244-1.195 3.618l1.803 8.25a.75.75 0 00.732.59h4.406a.75.75 0 00.735-.59l1.803-8.25a.75.75 0 00.005-.025c.25-1.37-.319-2.672-1.228-3.596-.91-.924-2.178-1.527-3.518-1.527zm6.97-.002a.75.75 0 00-.41.105l-1.673.967a.75.75 0 10.75 1.299l1.674-.967a.75.75 0 00-.342-1.404zm-13.96 0a.75.75 0 00-.318 1.404l1.672.967a.75.75 0 10.75-1.299l-1.672-.967a.75.75 0 00-.432-.105zM11.71 1.074a.75.75 0 00-.66.385l-.967 1.674a.75.75 0 101.299.75l.967-1.674a.75.75 0 00-.64-1.135zm-8.053 0a.75.75 0 00-.615 1.135l.967 1.674a.75.75 0 101.299-.75L4.34 1.459a.75.75 0 00-.684-.385zM7.685 0a.75.75 0 00-.74.76v1.933a.75.75 0 101.5 0V.76a.75.75 0 00-.76-.76zm19.198 4.383a.75.75 0 00-.271.049 7.002 7.002 0 00-4.496 7.787A7.004 7.004 0 0029.004 18c3.39 0 6.3-2.443 6.89-5.781a7.002 7.002 0 00-4.497-7.787.75.75 0 10-.514 1.41 5.487 5.487 0 013.534 6.117 5.488 5.488 0 01-5.413 4.541 5.488 5.488 0 01-5.412-4.54 5.487 5.487 0 013.534-6.118.75.75 0 00-.243-1.46zm2.11-2.649a.75.75 0 00-.739.76v8.512a.75.75 0 101.5 0V2.494a.75.75 0 00-.761-.76zM20.786.633a.75.75 0 00-.688.564l-4.25 15.858a.75.75 0 101.45.388l4.25-15.857a.75.75 0 00-.762-.953z" />
+                        </svg>
+                        <svg width="12" height="14" class="icon">
+                            <path fill="currentColor"
+                                d="M6 0C3.953 0 2.28 1.816 2.28 4.04v1.416H.586c-.323 0-.585.285-.585.635v7.274c0 .35.262.635.585.635h10.83c.323 0 .585-.284.585-.635V6.091c0-.35-.262-.635-.585-.635H9.72V4.04C9.72 1.816 8.047 0 6 0zm0 1.27c1.415 0 2.55 1.232 2.55 2.77v1.416h-5.1V4.04c0-1.537 1.135-2.77 2.55-2.77zm0 5.763c.787 0 1.425.693 1.425 1.548 0 .645-.37 1.222-.926 1.448v2.419h-.998v-2.42c-.556-.226-.925-.803-.926-1.447 0-.855.638-1.548 1.425-1.548z" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onDot()" fxLayout="row" fxLayoutAlign="center center">
+                        <span class="dot" fxFlex="20%" fxLayoutAlign="center center">&bull;</span>
+                        <span fxFlex="60%" fxLayout="column" fxLayoutAlign="center center">
+                            <span>NO</span>
+                            <span class="small">PRI</span>
+                        </span>
+                    </button>
+                </div>
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onDigitZero()" fxLayout="row" fxLayoutAlign="center center">
+                        <span class="digit" fxFlex="20%" fxLayoutAlign="center center">0</span>
+                        <span fxFlex="60%" fxLayoutAlign="center center">LVL</span>
+                    </button>
+                </div>
+                <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                    <button class="button" (click)="onEnter()" fxLayout="row wrap" fxLayoutAlign="center center">
+                        <span fxFlex="100%" fxLayout="row" fxLayoutAlign="center center">
+                            <span class="digit" fxFlex="20%" fxLayoutAlign="center center">E</span>
+                            <span fxFlex="60%" fxLayoutAlign="center center">YES</span>
+                        </span>
+                        <span class="small" fxFlex="100%" fxLayout="row" fxLayoutAlign="center center">Q.SRCH</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="button-group-3" fxLayout="row" fxLayoutAlign="center center">
+            <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                <button class="button" (click)="onSystem()" fxLayout="column" fxLayoutAlign="center center">
+                    <span>SYSTEM</span>
+                </button>
+            </div>
+            <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                <button class="button" (click)="onDept()" fxLayout="column" fxLayoutAlign="center center">
+                    <span>DEPT</span>
+                    <span class="highlight">SITE</span>
+                </button>
+            </div>
+            <div class="button-wrapper" fxFlex="25%" fxLayout="column">
+                <button class="button" (click)="onChan()" fxLayout="column" fxLayoutAlign="center center">
+                    <span>CHAN</span>
+                    <span class="highlight">MOD</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

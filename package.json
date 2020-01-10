@@ -1,0 +1,14 @@
+{
+    "name": "rc-scanner",
+    "version": "0.9.1",
+    "private": true,
+    "main": "run.js",
+    "scripts": {
+        "list-audio": "cd server; npm run list-audio",
+        "start": "node run.js",
+        "update": "node update.js"
+    },
+    "author": "Chrystian Huot",
+    "license": "LICENSE",
+    "homepage": "https://github.com/chuot/rc-scanner"
+}

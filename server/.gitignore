@@ -1,0 +1,4 @@
+/.env
+/crash.log
+/database.sqlite
+/node_modules

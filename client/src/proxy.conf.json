@@ -1,0 +1,12 @@
+[
+    {
+        "context": [
+            "/audio",
+            "/config",
+            "/control"
+        ],
+        "target": "http://localhost:3000",
+        "secure": false,
+        "ws": true
+    }
+]

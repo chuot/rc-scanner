@@ -1,0 +1,4 @@
+<ng-container *ngIf="model" [ngSwitch]="model">
+    <app-rc-scanner-bcd436hp *ngSwitchCase="'bcd436hp'"></app-rc-scanner-bcd436hp>
+    <app-rc-scanner-unsupported *ngSwitchDefault></app-rc-scanner-unsupported>
+</ng-container>

@@ -1,0 +1,10 @@
+[Unit]
+Description=Runs rc-scanner.service 1 minute after boot up
+
+[Timer]
+OnBootSec=1m
+Unit=rc-scanner.service
+
+[Install]
+DefaultInstance=DEFAULT
+WantedBy=multi-user.target

@@ -1,0 +1,100 @@
+$body-bgcolor: #1e1e1e;
+
+$border-color: #1e1e1e;
+
+$button-bgcolor-1: #1d1d1d;
+$button-bgcolor-2: #2d2d2d;
+$button-color-1: #fafafa;
+$button-color-2: #fafafa;
+
+$display-bgcolor: #bebeae;
+$display-color: #1e1e1e;
+$display-font-size: 24px;
+
+:host {
+	background-color: $body-bgcolor;
+	border-radius: 8px;
+	display: block;
+	padding: 16px;
+}
+
+.control,
+.display {
+	margin-top: 1em;
+}
+
+.control {
+	.aboveline {
+		text-decoration-line: overline;
+	}
+
+	.button {
+		border: none;
+		border-radius: 4px;
+		box-shadow: 1px 1px 2px white inset, -1px -1px 1px black inset, 0 0 2px 2px black;
+		font-family: inherit;
+		font-size: 12px;
+		font-weight: 500;
+		height: 40px;
+		line-height: 14px;
+		margin: auto;
+		max-width: 100px;
+		padding: 0;
+		position: relative;
+		text-shadow: 0 0 4px rgba(0, 0, 0, .5);
+		width: 100%;
+
+		&:active,
+		&:focus {
+			outline: none;
+		}
+
+		&:active {
+			top: 4px;
+		}
+	}
+
+	.button-group-1,
+	.button-group-2 {
+		margin-bottom: .25em;
+	}
+
+	.button-group-1 button {
+		background-color: $button-bgcolor-1;
+		color: $button-color-1;
+	}
+
+	.button-group-2 button {
+		background-color: $button-bgcolor-2;
+		color: $button-color-2;
+	}
+
+	.button-wrapper {
+		padding: 4px;
+	}
+}
+
+.display {
+    align-items: center;
+	background-color: $display-bgcolor;
+	border-radius: 4px;
+	box-shadow: 2px 2px 4px black inset, 1px 1px 2px 1px white;
+	box-sizing: border-box;
+    color: $display-color;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+	min-height: 256px;
+	min-width: 310px;
+	padding: 8px;
+	user-select: none;
+	white-space: pre-wrap;
+}
+
+.led {
+	background-color: #505050;
+	border-radius: 2px;
+	height: 12px;
+	margin-left: auto;
+	width: 24px;
+}
