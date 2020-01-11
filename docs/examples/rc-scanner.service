@@ -9,7 +9,7 @@ Restart=always
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=rc-scanner
-PAMName=systemd-user
+PAMName=systemd-service
 User=radio
 Group=radio
 
