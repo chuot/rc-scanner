@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AppRcScannerConfig, AppRcScannerService } from './rc-scanner.service';
 
@@ -16,7 +16,9 @@ export class AppRcScannerComponent implements OnDestroy, OnInit {
 
     private subscription: Subscription;
 
-    constructor(private rcScannerService: AppRcScannerService) { }
+    constructor(private ngElementRef: ElementRef, private rcScannerService: AppRcScannerService) {
+        rcScannerService.rootElement = ngElementRef.nativeElement;
+    }
 
     ngOnDestroy(): void {
         this.subscription.unsubscribe();

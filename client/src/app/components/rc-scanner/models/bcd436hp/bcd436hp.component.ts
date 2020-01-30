@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AppRcScannerMessage, AppRcScannerService } from '../../rc-scanner.service';
 
@@ -35,6 +35,7 @@ export class AppRcScannerBcd436HpComponent implements OnDestroy, OnInit {
 
     constructor(
         private ngChangeDetectorReg: ChangeDetectorRef,
+        private ngElementRef: ElementRef,
         private rcScannerService: AppRcScannerService,
     ) { }
 
