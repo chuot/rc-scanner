@@ -124,8 +124,12 @@ export class AppRcScannerBcd436HpComponent implements OnDestroy, OnInit {
         this.rcScannerService.send('KEY,.,P');
     }
 
-    @HostListener('document:keydown.enter')
-    onEnter(): void {
+    @HostListener('document:keydown.enter', ['$event'])
+    onEnter(event?: Event): void {
+        if (event instanceof Event) {
+            event.preventDefault();
+        }
+
         this.rcScannerService.send('KEY,E,P');
     }
 
