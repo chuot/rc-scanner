@@ -213,7 +213,7 @@ export class AppRcScannerService implements OnDestroy {
 
                 audioSource.connect(this.audioContext.destination);
 
-                this.audioStartTime = Math.max(this.audioContext.currentTime, this.audioStartTime);
+                this.audioStartTime = Math.min(this.audioContext.currentTime, this.audioStartTime);
 
                 audioSource.start(this.audioStartTime);
 
