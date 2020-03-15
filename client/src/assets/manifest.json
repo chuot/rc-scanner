@@ -3,7 +3,7 @@
   "short_name": "Rc Scanner",
   "theme_color": "rgb(30,30,30)",
   "background_color": "rgb(30,30,30)",
-  "display": "fullscreen",
+  "display": "standalone",
   "orientation": "portrait",
   "Scope": "/",
   "start_url": "/",
