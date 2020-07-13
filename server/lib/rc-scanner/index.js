@@ -31,7 +31,7 @@ const { Com } = require('./com');
 const { models } = require('./models');
 const { Ws } = require('./ws');
 
-const clientRoot = path.join(__dirname, '../../../client/dist');
+const clientRoot = path.join(__dirname, '../../../client/dist/rc-scanner');
 const clientMain = 'index.html';
 
 class RcScanner extends EventEmitter {
