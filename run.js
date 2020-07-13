@@ -45,7 +45,7 @@ if (missingModules.client || missingModules.server) {
     process.stdout.write(' done\n');
 }
 
-if (!fs.existsSync(path.resolve(clientPath, 'dist/main.html'))) {
+if (!fs.existsSync(path.resolve(clientPath, 'dist/rc-scanner/index.html'))) {
     process.stdout.write('Building client app...');
     childProcess.execSync('npm run build', { cwd: clientPath, stdio: ['ignore', 'ignore', 'pipe'] });
     process.stdout.write(' done\n');

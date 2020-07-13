@@ -32,7 +32,7 @@ const { models } = require('./models');
 const { Ws } = require('./ws');
 
 const clientRoot = path.join(__dirname, '../../../client/dist');
-const clientMain = 'main.html';
+const clientMain = 'index.html';
 
 class RcScanner extends EventEmitter {
     constructor(options = {}) {
