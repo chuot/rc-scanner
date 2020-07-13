@@ -35,7 +35,7 @@ const port = parseInt(process.env.NODE_PORT, 10) || 3000;
 
 const app = express();
 
-const clientRoot = path.join(__dirname, '../client/dist');
+const clientRoot = path.join(__dirname, '../client/dist/rc-scanner');
 
 const httpServer = http.createServer(app);
 
