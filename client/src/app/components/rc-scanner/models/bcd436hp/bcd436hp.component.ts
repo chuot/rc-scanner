@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- *  Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2020 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,17 @@
  * ****************************************************************************
  */
 
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AppRcScannerMessage, AppRcScannerService } from '../../rc-scanner.service';
 
-import * as glyphs from './bcd436hp';
+// @ts-ignore
+import * as glyphs from './bcd436hp.js';
 
 interface Display {
-    mode?: string[];
-    size?: number;
-    text?: string[];
+    mode: string[];
+    size: number;
+    text: string[];
 }
 
 @Component({
@@ -40,34 +41,30 @@ export class AppRcScannerBcd436HpComponent implements OnDestroy, OnInit {
 
     led = 'OFF';
 
-    get powerOn() {
-        return this._powerOn;
-    }
+    powerOn = false;
 
     readonly display: Display[] = [];
 
-    private _powerOn = false;
-
     private unknownGlyphs: string[] = [];
 
-    private subscription: Subscription = null;
+    private subscription: Subscription | null = null;
 
     constructor(
         private ngChangeDetectorReg: ChangeDetectorRef,
-        private ngElementRef: ElementRef,
         private rcScannerService: AppRcScannerService,
     ) { }
 
     ngOnDestroy(): void {
         if (this.subscription instanceof Subscription) {
             this.subscription.unsubscribe();
+
             this.subscription = null;
         }
     }
 
     ngOnInit(): void {
         this.subscription = this.rcScannerService.message.subscribe((message: AppRcScannerMessage) => {
-            if ('data' in message) {
+            if (typeof message.data === 'string') {
                 this.parseData(message.data);
             }
         });
@@ -189,8 +186,9 @@ export class AppRcScannerBcd436HpComponent implements OnDestroy, OnInit {
     onLightPower(): void {
         if (this.powerOn) {
             this.rcScannerService.send('KEY,V,P');
+
         } else {
-            this._powerOn = true;
+            this.powerOn = true;
 
             this.rcScannerService.powerOn();
         }

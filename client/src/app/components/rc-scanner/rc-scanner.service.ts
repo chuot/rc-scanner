@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- *  Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2020 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,12 @@
 import { HttpClient } from '@angular/common/http';
 import { EventEmitter, Injectable, OnDestroy } from '@angular/core';
 
+declare global {
+    interface Window {
+        webkitAudioContext: typeof AudioContext;
+    }
+}
+
 export interface AppRcScannerConfig {
     model: string;
     reconnectInterval: number;
@@ -28,12 +34,10 @@ export interface AppRcScannerConfig {
 
 export interface AppRcScannerMessage {
     close?: boolean;
-    data?: any;
+    data?: string;
     error?: Event;
     ready?: boolean;
 }
-
-declare var webkitAudioContext: any;
 
 @Injectable({
     providedIn: 'root',
@@ -45,15 +49,13 @@ export class AppRcScannerService implements OnDestroy {
 
     readonly message = new EventEmitter<AppRcScannerMessage>();
 
-    private audioContext: AudioContext;
-    private audioStartTime: number;
+    private audioContext: AudioContext | undefined;
+    private audioStartTime = NaN;
 
-    private _config: AppRcScannerConfig;
-
-    private _powerOn = false;
-
-    private wsAudio: WebSocket;
-    private wsControl: WebSocket;
+    private isPowerOn = false;
+    private scannerConfig: AppRcScannerConfig | undefined;
+    private wsAudio: WebSocket | undefined;
+    private wsControl: WebSocket | undefined;
 
     constructor(private httpClient: HttpClient) {
         this.bootstrapAudio();
@@ -64,8 +66,8 @@ export class AppRcScannerService implements OnDestroy {
     }
 
     powerOn(): void {
-        if (!this._powerOn) {
-            this._powerOn = true;
+        if (!this.powerOn) {
+            this.isPowerOn = true;
 
             this.openAudioWebSocket();
 
@@ -98,7 +100,12 @@ export class AppRcScannerService implements OnDestroy {
 
     toggleFullscreen(): void {
         if (document.fullscreenElement) {
-            const el: any = document;
+            const el: {
+                exitFullscreen?: () => void;
+                mozCancelFullScreen?: () => void;
+                msExitFullscreen?: () => void;
+                webkitExitFullscreen?: () => void;
+            } = document;
 
             if (el.exitFullscreen) {
                 el.exitFullscreen();
@@ -106,26 +113,28 @@ export class AppRcScannerService implements OnDestroy {
                 el.mozCancelFullScreen();
             } else if (el.msExitFullscreen) {
                 el.msExitFullscreen();
-            } else if (el.mozCancelFullScreen) {
-                el.mozCancelFullScreen();
             } else if (el.webkitExitFullscreen) {
                 el.webkitExitFullscreen();
             }
 
         } else {
-            const el: any = this.rootElement || document;
+            const el: {
+                requestFullscreen?: () => void;
+                mozRequestFullScreen?: () => void;
+                msRequestFullscreen?: () => void;
+                webkitRequestFullscreen?: () => void;
+            } = this.rootElement || document;
 
             if (el.requestFullscreen) {
                 el.requestFullscreen();
             } else if (el.mozRequestFullScreen) {
-                el.mozRequestFullscreen();
+                el.mozRequestFullScreen();
             } else if (el.msRequestFullscreen) {
                 el.msRequestFullscreen();
             } else if (el.webkitRequestFullscreen) {
                 el.webkitRequestFullscreen();
             }
         }
-
     }
 
     private bootstrapAudio(): void {
@@ -134,19 +143,13 @@ export class AppRcScannerService implements OnDestroy {
         const bootstrap = () => {
             if (!this.audioContext) {
                 if ('webkitAudioContext' in window) {
-                    this.audioContext = new webkitAudioContext();
+                    this.audioContext = new window.webkitAudioContext();
                 } else {
                     this.audioContext = new AudioContext();
                 }
             }
 
             if (this.audioContext) {
-                this.audioContext.onstatechange = () => {
-                    if (this.audioContext.state === 'suspended') {
-                        this.audioContext.resume();
-                    }
-                };
-
                 this.audioContext.resume().then(() => {
                     events.forEach((event) => document.body.removeEventListener(event, bootstrap));
                 });
@@ -158,7 +161,7 @@ export class AppRcScannerService implements OnDestroy {
 
     private bootstrapControl(): void {
         document.addEventListener('visibilitychange', () => {
-            if (this._powerOn) {
+            if (this.isPowerOn) {
                 if (document.hidden) {
                     this.closeControlWebSocket();
 
@@ -171,9 +174,9 @@ export class AppRcScannerService implements OnDestroy {
 
     private closeAudioWebSocket(): void {
         if (this.wsAudio instanceof WebSocket) {
-            this.wsAudio.onclose = undefined;
-            this.wsAudio.onerror = undefined;
-            this.wsAudio.onopen = undefined;
+            this.wsAudio.onclose = null;
+            this.wsAudio.onerror = null;
+            this.wsAudio.onopen = null;
 
             this.wsAudio.close();
 
@@ -183,9 +186,9 @@ export class AppRcScannerService implements OnDestroy {
 
     private closeControlWebSocket(): void {
         if (this.wsControl instanceof WebSocket) {
-            this.wsControl.onclose = undefined;
-            this.wsControl.onerror = undefined;
-            this.wsControl.onopen = undefined;
+            this.wsControl.onclose = null;
+            this.wsControl.onerror = null;
+            this.wsControl.onopen = null;
 
             this.wsControl.close();
 
@@ -194,15 +197,15 @@ export class AppRcScannerService implements OnDestroy {
     }
 
     private getConfig(): void {
-        this.httpClient.get(`${window.location.href}config`).subscribe((config: AppRcScannerConfig) => {
-            this._config = config;
+        this.httpClient.get<AppRcScannerConfig>(`${window.location.href}config`).subscribe((config) => {
+            this.scannerConfig = config;
 
             this.config.emit(config);
         });
     }
 
     private openAudioWebSocket(): void {
-        this.audioStartTime = this.audioContext.currentTime;
+        this.audioStartTime = this.audioContext?.currentTime || NaN;
 
         this.wsAudio = new WebSocket(`${window.location.href.replace(/^http/, 'ws')}audio`);
 
@@ -215,29 +218,33 @@ export class AppRcScannerService implements OnDestroy {
         };
 
         this.wsAudio.onopen = () => {
-            this.wsAudio.onmessage = (ev: MessageEvent) => {
-                const arrayBufferView = new Int16Array(ev.data);
+            if (this.wsAudio instanceof WebSocket) {
+                this.wsAudio.onmessage = (ev: MessageEvent) => {
+                    if (this.audioContext instanceof AudioContext && this.scannerConfig) {
+                        const arrayBufferView = new Int16Array(ev.data);
 
-                const audioBuffer = this.audioContext.createBuffer(1, arrayBufferView.length, this._config.sampleRate);
+                        const audioBuffer = this.audioContext.createBuffer(1, arrayBufferView.length, this.scannerConfig.sampleRate);
 
-                const audioChannel = audioBuffer.getChannelData(0);
+                        const audioChannel = audioBuffer.getChannelData(0);
 
-                const audioSource = this.audioContext.createBufferSource();
+                        const audioSource = this.audioContext.createBufferSource();
 
-                for (let i = 0; i < arrayBufferView.length; i++) {
-                    audioChannel[i] = arrayBufferView[i] / 32768;
-                }
+                        for (let i = 0; i < arrayBufferView.length; i++) {
+                            audioChannel[i] = arrayBufferView[i] / 32768;
+                        }
 
-                audioSource.buffer = audioBuffer;
+                        audioSource.buffer = audioBuffer;
 
-                audioSource.connect(this.audioContext.destination);
+                        audioSource.connect(this.audioContext.destination);
 
-                this.audioStartTime = Math.max(this.audioContext.currentTime, this.audioStartTime);
+                        this.audioStartTime = Math.max(this.audioContext.currentTime, this.audioStartTime);
 
-                audioSource.start(this.audioStartTime);
+                        audioSource.start(this.audioStartTime);
 
-                this.audioStartTime += audioBuffer.duration;
-            };
+                        this.audioStartTime += audioBuffer.duration;
+                    }
+                };
+            }
         };
     }
 
@@ -255,21 +262,23 @@ export class AppRcScannerService implements OnDestroy {
         this.wsControl.onerror = (ev: Event) => this.message.emit({ error: ev });
 
         this.wsControl.onopen = () => {
-            this.message.emit({ ready: true });
+            if (this.wsControl instanceof WebSocket) {
+                this.message.emit({ ready: true });
 
-            this.wsControl.onmessage = (ev: MessageEvent) => this.message.emit({ data: ev.data });
+                this.wsControl.onmessage = (ev: MessageEvent) => this.message.emit({ data: ev.data });
+            }
         };
     }
 
     private reconnectAudio(): void {
         this.closeAudioWebSocket();
 
-        setTimeout(() => this.openAudioWebSocket(), this._config.reconnectInterval);
+        setTimeout(() => this.openAudioWebSocket(), this.scannerConfig?.reconnectInterval);
     }
 
     private reconnectControl(): void {
         this.closeControlWebSocket();
 
-        setTimeout(() => this.openControlWebSocket(), this._config.reconnectInterval);
+        setTimeout(() => this.openControlWebSocket(), this.scannerConfig?.reconnectInterval);
     }
 }

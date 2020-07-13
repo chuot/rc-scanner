@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- *  Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2020 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AppRcScannerConfig, AppRcScannerService } from './rc-scanner.service';
 
@@ -26,25 +26,18 @@ import { AppRcScannerConfig, AppRcScannerService } from './rc-scanner.service';
     styleUrls: ['./rc-scanner.component.scss'],
     templateUrl: './rc-scanner.component.html',
 })
-export class AppRcScannerComponent implements OnDestroy, OnInit {
-    get model() {
-        return this._model;
-    }
-
-    private _model: string;
+export class AppRcScannerComponent implements OnDestroy {
+    model: string | undefined;
 
     private subscription: Subscription;
 
     constructor(private ngElementRef: ElementRef, private rcScannerService: AppRcScannerService) {
+        this.subscription = this.rcScannerService.config.subscribe((config: AppRcScannerConfig) => this.model = config.model);
+
         rcScannerService.rootElement = ngElementRef.nativeElement;
     }
 
     ngOnDestroy(): void {
         this.subscription.unsubscribe();
-        this.subscription = undefined;
-    }
-
-    ngOnInit(): void {
-        this.subscription = this.rcScannerService.config.subscribe((config: AppRcScannerConfig) => this._model = config.model);
     }
 }

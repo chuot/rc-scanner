@@ -17,11 +17,13 @@
  * ****************************************************************************
  */
 
-import { Component } from '@angular/core';
+const PROXY_CONFIG = {
+    "/": {
+        "bypass": (req) => req.upgrade ? null : '/',
+        "secure": false,
+        "target": "http://localhost:3000",
+        "ws": true,
+    },
+};
 
-@Component({
-    selector: 'app-rc-scanner-unsupported',
-    styleUrls: ['./unsupported.component.scss'],
-    templateUrl: './unsupported.component.html',
-})
-export class AppRcScannerUnsupportedComponent { }
+module.exports = PROXY_CONFIG;
