@@ -201,17 +201,31 @@ export class AppRcScannerService implements OnDestroy {
     }
 
     private getConfig(): void {
-        this.httpClient.get<AppRcScannerConfig>(`${window.location.href}config`).subscribe((config) => {
+        const url = this.getUrl('config');
+
+        this.httpClient.get<AppRcScannerConfig>(url).subscribe((config) => {
             this.scannerConfig = config;
 
             this.config.emit(config);
         });
     }
 
+    private getUrl(path: string, options: { ws?: boolean } = {}): string {
+        let url = window.location.href.replace(/[^\/]+$/, '') + path.replace(/^\//, '');
+
+        if (options.ws) {
+            url = url.replace(/^http/, 'ws');
+        }
+
+        return url;
+    }
+
     private openAudioWebSocket(): void {
+        const url = this.getUrl('audio', { ws: true });
+
         this.audioStartTime = this.audioContext?.currentTime || NaN;
 
-        this.wsAudio = new WebSocket(`${window.location.href.replace(/^http/, 'ws')}audio`);
+        this.wsAudio = new WebSocket(url);
 
         this.wsAudio.binaryType = 'arraybuffer';
 
@@ -253,7 +267,9 @@ export class AppRcScannerService implements OnDestroy {
     }
 
     private openControlWebSocket(): void {
-        this.wsControl = new WebSocket(`${window.location.href.replace(/^http/, 'ws')}control`);
+        const url = this.getUrl('control', { ws: true });
+
+        this.wsControl = new WebSocket(url);
 
         this.wsControl.onclose = (ev: CloseEvent) => {
             if (ev.code !== 1000) {
