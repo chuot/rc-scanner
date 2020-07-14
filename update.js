@@ -31,9 +31,9 @@ childProcess.execSync('git pull', { stdio: ['ignore', 'ignore', 'pipe'] });
 process.stdout.write(' done\n');
 
 process.stdout.write('Updating node modules...');
-childProcess.execSync('npm install', { cwd: clientPath, stdio: ['ignore', 'ignore', 'pipe'] });
+childProcess.execSync('npm ci', { cwd: clientPath, stdio: ['ignore', 'ignore', 'pipe'] });
 childProcess.execSync('npm prune', { cwd: clientPath, stdio: ['ignore', 'ignore', 'pipe'] });
-childProcess.execSync('npm install', { cwd: serverPath, stdio: ['ignore', 'ignore', 'pipe'] });
+childProcess.execSync('npm ci', { cwd: serverPath, stdio: ['ignore', 'ignore', 'pipe'] });
 childProcess.execSync('npm prune', { cwd: serverPath, stdio: ['ignore', 'ignore', 'pipe'] });
 process.stdout.write(' done\n');
 

@@ -35,11 +35,11 @@ if (missingModules.client || missingModules.server) {
     process.stdout.write('Installing node modules...');
 
     if (missingModules.client) {
-        childProcess.execSync('npm install', { cwd: clientPath, stdio: ['ignore', 'ignore', 'pipe'] });
+        childProcess.execSync('npm ci', { cwd: clientPath, stdio: ['ignore', 'ignore', 'pipe'] });
     }
 
     if (missingModules.server) {
-        childProcess.execSync('npm install', { cwd: serverPath, stdio: ['ignore', 'ignore', 'pipe'] });
+        childProcess.execSync('npm ci', { cwd: serverPath, stdio: ['ignore', 'ignore', 'pipe'] });
     }
 
     process.stdout.write(' done\n');
