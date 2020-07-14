@@ -66,7 +66,7 @@ export class AppRcScannerService implements OnDestroy {
     }
 
     powerOn(): void {
-        if (!this.powerOn) {
+        if (!this.isPowerOn) {
             this.isPowerOn = true;
 
             this.openAudioWebSocket();

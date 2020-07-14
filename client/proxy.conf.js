@@ -17,13 +17,17 @@
  * ****************************************************************************
  */
 
-const PROXY_CONFIG = {
-    "/": {
-        "bypass": (req) => req.upgrade ? null : '/',
-        "secure": false,
+const PROXY_CONFIG = [
+    {
+        "context": [
+            "/audio",
+            "/config",
+            "/control"
+        ],
         "target": "http://localhost:3000",
-        "ws": true,
-    },
-};
+        "secure": false,
+        "ws": true
+    }
+];
 
 module.exports = PROXY_CONFIG;

@@ -35,7 +35,6 @@ import { AppRcScannerModule } from './components/rc-scanner/rc-scanner.module';
         BrowserModule,
         HttpClientModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-
     ],
 })
 export class AppModule { }
