@@ -1,4 +1,4 @@
-# RC Scanner v0.9.1 (BETA)
+# RC Scanner (BETA)
 
 *RC Scanner*, or Remote Controlled Scanner, is a progressive web interface which allows you to remotely control your scanner and receive audio from anywhere in the world. *RC Scanner* is degined to works well on desktop and mobile devices.
 
