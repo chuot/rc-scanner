@@ -163,6 +163,35 @@ export class AppRcScannerBcd436HpComponent implements OnDestroy, OnInit {
         this.rcScannerService.send('KEY,F,P');
     }
 
+    @HostListener('document:keydown.l')
+    onLightPower(): void {
+        setTimeout(() => {
+            if (this.powerOn) {
+                this.rcScannerService.send('KEY,V,P');
+
+            } else {
+                this.powerOn = true;
+
+                this.rcScannerService.powerOn();
+            }
+        });
+    }
+
+    @HostListener('document:keydown.m')
+    onMenu(): void {
+        this.rcScannerService.send('KEY,M,P');
+    }
+
+    @HostListener('document:keydown.r')
+    onReplayRecord(): void {
+        this.rcScannerService.send('KEY,Y,P');
+    }
+
+    @HostListener('document:keydown.s')
+    onSystem(): void {
+        this.rcScannerService.send('KEY,A,P');
+    }
+
     @HostListener('document:keydown.arrowleft')
     onVfoLeft(): void {
         this.rcScannerService.send('KEY,<,P');
@@ -180,33 +209,6 @@ export class AppRcScannerBcd436HpComponent implements OnDestroy, OnInit {
         }
 
         this.rcScannerService.send('KEY,^,P');
-    }
-
-    @HostListener('document:keydown.l')
-    onLightPower(): void {
-        if (this.powerOn) {
-            this.rcScannerService.send('KEY,V,P');
-
-        } else {
-            this.powerOn = true;
-
-            this.rcScannerService.powerOn();
-        }
-    }
-
-    @HostListener('document:keydown.m')
-    onMenu(): void {
-        this.rcScannerService.send('KEY,M,P');
-    }
-
-    @HostListener('document:keydown.r')
-    onReplayRecord(): void {
-        this.rcScannerService.send('KEY,Y,P');
-    }
-
-    @HostListener('document:keydown.s')
-    onSystem(): void {
-        this.rcScannerService.send('KEY,A,P');
     }
 
     @HostListener('document:keydown.z')
