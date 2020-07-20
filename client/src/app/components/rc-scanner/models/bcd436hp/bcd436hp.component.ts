@@ -165,16 +165,14 @@ export class AppRcScannerBcd436HpComponent implements OnDestroy, OnInit {
 
     @HostListener('document:keydown.l')
     onLightPower(): void {
-        setTimeout(() => {
-            if (this.powerOn) {
-                this.rcScannerService.send('KEY,V,P');
+        if (this.powerOn) {
+            this.rcScannerService.send('KEY,V,P');
 
-            } else {
-                this.powerOn = true;
+        } else {
+            this.powerOn = true;
 
-                this.rcScannerService.powerOn();
-            }
-        });
+            this.rcScannerService.powerOn();
+        }
     }
 
     @HostListener('document:keydown.m')

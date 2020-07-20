@@ -50,11 +50,17 @@ export class AppRcScannerService implements OnDestroy {
     readonly message = new EventEmitter<AppRcScannerMessage>();
 
     private audioContext: AudioContext | undefined;
+
+    private audioReady = new EventEmitter<void>();
+
     private audioStartTime = NaN;
 
     private isPowerOn = false;
+
     private scannerConfig: AppRcScannerConfig | undefined;
+
     private wsAudio: WebSocket | undefined;
+
     private wsControl: WebSocket | undefined;
 
     constructor(private httpClient: HttpClient) {
@@ -65,8 +71,10 @@ export class AppRcScannerService implements OnDestroy {
         this.getConfig();
     }
 
-    powerOn(): void {
+    async powerOn(): Promise<void> {
         if (!this.isPowerOn) {
+            await this.audioReady.toPromise();
+
             this.isPowerOn = true;
 
             this.openAudioWebSocket();
@@ -146,8 +154,9 @@ export class AppRcScannerService implements OnDestroy {
                     latencyHint: 'playback',
                 };
 
-                if ('webkitAudioContext' in window) {
+                if (window.webkitAudioContext) {
                     this.audioContext = new window.webkitAudioContext(options);
+
                 } else {
                     this.audioContext = new AudioContext(options);
                 }
@@ -156,6 +165,8 @@ export class AppRcScannerService implements OnDestroy {
             if (this.audioContext) {
                 this.audioContext.resume().then(() => {
                     events.forEach((event) => document.body.removeEventListener(event, bootstrap));
+
+                    setTimeout(() => this.audioReady.complete());
                 });
             }
         };
