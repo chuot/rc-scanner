@@ -166,7 +166,7 @@ export class AppRcScannerService implements OnDestroy {
                 this.audioContext.resume().then(() => {
                     events.forEach((event) => document.body.removeEventListener(event, bootstrap));
 
-                    setTimeout(() => this.audioReady.complete(), 1000);
+                    setTimeout(() => this.audioReady.complete(), 500);
                 });
             }
         };
@@ -181,7 +181,7 @@ export class AppRcScannerService implements OnDestroy {
                     this.closeControlWebSocket();
 
                 } else {
-                    this.openControlWebSocket();
+                    setTimeout(() => this.openControlWebSocket(), 500);
                 }
             }
         });

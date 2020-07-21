@@ -31,7 +31,7 @@ export class AppRcScannerComponent implements OnDestroy {
 
     private subscription: Subscription;
 
-    constructor(private ngElementRef: ElementRef, private rcScannerService: AppRcScannerService) {
+    constructor(ngElementRef: ElementRef, private rcScannerService: AppRcScannerService) {
         this.subscription = this.rcScannerService.config.subscribe((config: AppRcScannerConfig) => this.model = config.model);
 
         rcScannerService.rootElement = ngElementRef.nativeElement;
