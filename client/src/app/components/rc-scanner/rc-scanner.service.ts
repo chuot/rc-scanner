@@ -17,8 +17,9 @@
  * ****************************************************************************
  */
 
+import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { EventEmitter, Injectable, OnDestroy } from '@angular/core';
+import { EventEmitter, Inject, Injectable, OnDestroy } from '@angular/core';
 
 declare global {
     interface Window {
@@ -43,7 +44,7 @@ export interface AppRcScannerMessage {
     providedIn: 'root',
 })
 export class AppRcScannerService implements OnDestroy {
-    rootElement: HTMLElement = document.documentElement;
+    rootElement: HTMLElement = this.document.documentElement;
 
     readonly config = new EventEmitter<AppRcScannerConfig>();
 
@@ -63,7 +64,10 @@ export class AppRcScannerService implements OnDestroy {
 
     private wsControl: WebSocket | undefined;
 
-    constructor(private httpClient: HttpClient) {
+    constructor(
+        @Inject(DOCUMENT) private document: Document,
+        private httpClient: HttpClient,
+    ) {
         this.bootstrapAudio();
 
         this.bootstrapControl();
@@ -107,13 +111,13 @@ export class AppRcScannerService implements OnDestroy {
     }
 
     toggleFullscreen(): void {
-        if (document.fullscreenElement) {
+        if (this.document.fullscreenElement) {
             const el: {
                 exitFullscreen?: () => void;
                 mozCancelFullScreen?: () => void;
                 msExitFullscreen?: () => void;
                 webkitExitFullscreen?: () => void;
-            } = document;
+            } = this.document;
 
             if (el.exitFullscreen) {
                 el.exitFullscreen();
@@ -131,7 +135,7 @@ export class AppRcScannerService implements OnDestroy {
                 mozRequestFullScreen?: () => void;
                 msRequestFullscreen?: () => void;
                 webkitRequestFullscreen?: () => void;
-            } = this.rootElement || document;
+            } = this.rootElement || this.document;
 
             if (el.requestFullscreen) {
                 el.requestFullscreen();
@@ -164,26 +168,28 @@ export class AppRcScannerService implements OnDestroy {
 
             if (this.audioContext) {
                 this.audioContext.resume().then(() => {
-                    events.forEach((event) => document.body.removeEventListener(event, bootstrap));
+                    events.forEach((event) => this.document.body.removeEventListener(event, bootstrap));
 
                     setTimeout(() => this.audioReady.complete(), 500);
                 });
             }
         };
 
-        events.forEach((event) => document.body.addEventListener(event, bootstrap));
+        events.forEach((event) => this.document.body.addEventListener(event, bootstrap));
     }
 
     private bootstrapControl(): void {
-        document.addEventListener('visibilitychange', () => {
-            if (this.isPowerOn) {
-                if (document.hidden) {
-                    this.closeControlWebSocket();
+        ['pageshow', 'focus', 'blur', 'visibilitychange', 'resume'].forEach((event) => {
+            this.document.addEventListener(event, () => {
+                if (this.isPowerOn) {
+                    if (this.document.hidden) {
+                        this.closeControlWebSocket();
 
-                } else {
-                    setTimeout(() => this.openControlWebSocket(), 500);
+                    } else if (!(this.wsControl instanceof WebSocket)) {
+                        this.openControlWebSocket();
+                    }
                 }
-            }
+            });
         });
     }
 
