@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { Component, ElementRef, OnDestroy } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AppRcScannerConfig, AppRcScannerService } from './rc-scanner.service';
 
@@ -35,6 +35,13 @@ export class AppRcScannerComponent implements OnDestroy {
         this.subscription = this.rcScannerService.config.subscribe((config: AppRcScannerConfig) => this.model = config.model);
 
         rcScannerService.rootElement = ngElementRef.nativeElement;
+    }
+
+    @HostListener('window:beforeunload', ['$event'])
+    exitNotification(event: BeforeUnloadEvent): void {
+        event.preventDefault();
+
+        event.returnValue = 'Do you really want to leave?';
     }
 
     ngOnDestroy(): void {
