@@ -272,11 +272,22 @@ export class AppRcScannerService implements OnDestroy {
 
                         audioSource.connect(this.audioContext.destination);
 
-                        this.audioStartTime = Math.max(this.audioContext.currentTime, this.audioStartTime);
+                        const start = () => {
+                            if (this.audioContext instanceof AudioContext) {
+                                this.audioStartTime = Math.max(this.audioContext.currentTime, this.audioStartTime);
 
-                        audioSource.start(this.audioStartTime);
+                                audioSource.start(this.audioStartTime);
 
-                        this.audioStartTime += audioBuffer.duration;
+                                this.audioStartTime += audioBuffer.duration;
+                            }
+                        };
+
+                        if (this.audioContext.state === 'suspended') {
+                            this.audioContext.resume().then(() => start());
+
+                        } else {
+                            start();
+                        }
                     }
                 };
             }
