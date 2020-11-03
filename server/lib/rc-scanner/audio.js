@@ -71,10 +71,10 @@ class Audio extends EventEmitter {
                 });
 
                 stream.on('error', () => {
+                    console.error('Audio stream error, restarting...');
+
                     this._stream.abort(() => {
-                        setTimeout(() => {
-                            this._stream = newStream();
-                        }, this.config.reconnectInterval);
+                        setTimeout(() => this._stream = newStream(), this.config.reconnectInterval);
                     });
                 });
 
