@@ -20,6 +20,7 @@
 import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { EventEmitter, Inject, Injectable, OnDestroy } from '@angular/core';
+import { timer } from 'rxjs';
 
 declare global {
     interface Window {
@@ -152,26 +153,25 @@ export class AppRcScannerService implements OnDestroy {
     private bootstrapAudio(): void {
         const events = ['keydown', 'mousedown', 'touchdown'];
 
-        const bootstrap = () => {
+        const bootstrap = async () => {
             if (!this.audioContext) {
-                const options: AudioContextOptions = {
-                    latencyHint: 'playback',
-                };
-
-                if (window.webkitAudioContext) {
-                    this.audioContext = new window.webkitAudioContext(options);
-
-                } else {
-                    this.audioContext = new AudioContext(options);
-                }
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'interactive' });
             }
 
             if (this.audioContext) {
-                this.audioContext.resume().then(() => {
-                    events.forEach((event) => this.document.body.removeEventListener(event, bootstrap));
+                const resume = () => {
+                    if (this.audioContext?.state === 'suspended') {
+                        this.audioContext.resume().then(() => resume());
+                    }
+                };
 
-                    setTimeout(() => this.audioReady.complete(), 500);
-                });
+                events.forEach((event) => this.document.body.removeEventListener(event, bootstrap));
+
+                await this.audioContext.resume();
+
+                this.audioContext.onstatechange = () => resume();
+
+                timer(500).subscribe(() => this.audioReady.complete());
             }
         };
 
@@ -255,7 +255,7 @@ export class AppRcScannerService implements OnDestroy {
         this.wsAudio.onopen = () => {
             if (this.wsAudio instanceof WebSocket) {
                 this.wsAudio.onmessage = (ev: MessageEvent) => {
-                    if (this.audioContext instanceof AudioContext && this.scannerConfig) {
+                    if (this.audioContext && this.scannerConfig) {
                         const arrayBufferView = new Int16Array(ev.data);
 
                         const audioBuffer = this.audioContext.createBuffer(1, arrayBufferView.length, this.scannerConfig.sampleRate);
@@ -273,7 +273,7 @@ export class AppRcScannerService implements OnDestroy {
                         audioSource.connect(this.audioContext.destination);
 
                         const start = () => {
-                            if (this.audioContext instanceof AudioContext) {
+                            if (this.audioContext) {
                                 this.audioStartTime = Math.max(this.audioContext.currentTime, this.audioStartTime);
 
                                 audioSource.start(this.audioStartTime);
@@ -321,12 +321,12 @@ export class AppRcScannerService implements OnDestroy {
     private reconnectAudio(): void {
         this.closeAudioWebSocket();
 
-        setTimeout(() => this.openAudioWebSocket(), this.scannerConfig?.reconnectInterval);
+        timer(this.scannerConfig?.reconnectInterval || 2000).subscribe(() => this.openAudioWebSocket());
     }
 
     private reconnectControl(): void {
         this.closeControlWebSocket();
 
-        setTimeout(() => this.openControlWebSocket(), this.scannerConfig?.reconnectInterval);
+        timer(this.scannerConfig?.reconnectInterval || 2000).subscribe(() => this.openControlWebSocket());
     }
 }

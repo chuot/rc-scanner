@@ -1,6 +1,6 @@
 {
     "name": "rc-scanner-server",
-    "version": "0.9.4",
+    "version": "0.9.5",
     "private": true,
     "main": "index.js",
     "scripts": {
@@ -17,9 +17,9 @@
         "naudiodon": "^2.2.4",
         "nodemon": "^2.0.6",
         "serialport": "^9.0.2",
-        "ws": "^7.3.1"
+        "ws": "^7.4.0"
     },
     "devDependencies": {
-        "eslint": "^7.12.1"
+        "eslint": "^7.13.0"
     }
 }
