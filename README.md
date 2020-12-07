@@ -14,7 +14,7 @@ At the moment, *RC Scanner* only works with a limited number of radio scanners.
 Supported models:
 
 * Uniden BCD436HP (stable)
-* Uniden BCD396T (future development; already have on in hand)
+* Uniden BCD396T (future development; already have one in hand)
 
 It is in the plans to add support for other radio scanner models, but first I have to find a way to get my hands on these models as they are generally quite expensive. Any help on the subject would be greatly appreciated.
 
