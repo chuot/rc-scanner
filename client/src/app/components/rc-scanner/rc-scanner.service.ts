@@ -151,7 +151,7 @@ export class AppRcScannerService implements OnDestroy {
     }
 
     private bootstrapAudio(): void {
-        const events = ['keydown', 'mousedown', 'touchdown'];
+        const events = ['keydown', 'mousedown', 'touchstart'];
 
         const bootstrap = async () => {
             if (!this.audioContext) {
