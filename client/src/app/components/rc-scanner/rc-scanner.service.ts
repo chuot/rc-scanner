@@ -155,7 +155,7 @@ export class AppRcScannerService implements OnDestroy {
 
         const bootstrap = async () => {
             if (!this.audioContext) {
-                this.audioContext = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'interactive' });
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'balanced' });
             }
 
             if (this.audioContext) {

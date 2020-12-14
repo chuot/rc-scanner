@@ -1,31 +1,31 @@
 {
     "author": "Chrystian Huot <chrystian.huot@saubeo.solutions>",
     "dependencies": {
-        "@angular/animations": "^10.2.3",
-        "@angular/cdk": "^10.2.7",
-        "@angular/common": "~10.2.3",
-        "@angular/compiler": "~10.2.3",
-        "@angular/core": "~10.2.3",
-        "@angular/flex-layout": "^10.0.0-beta.32",
-        "@angular/forms": "~10.2.3",
-        "@angular/material": "^10.2.7",
-        "@angular/platform-browser": "~10.2.3",
-        "@angular/platform-browser-dynamic": "~10.2.3",
-        "@angular/service-worker": "~10.2.3",
+        "@angular/animations": "^11.0.4",
+        "@angular/cdk": "^11.0.2",
+        "@angular/common": "~11.0.4",
+        "@angular/compiler": "~11.0.4",
+        "@angular/core": "~11.0.4",
+        "@angular/flex-layout": "^11.0.0-beta.33",
+        "@angular/forms": "~11.0.4",
+        "@angular/material": "^11.0.2",
+        "@angular/platform-browser": "~11.0.4",
+        "@angular/platform-browser-dynamic": "~11.0.4",
+        "@angular/service-worker": "~11.0.4",
         "rxjs": "~6.6.3",
         "tslib": "^2.0.3",
         "zone.js": "~0.11.3"
     },
     "devDependencies": {
-        "@angular-devkit/build-angular": "~0.1002.0",
-        "@angular/cli": "~10.2.0",
-        "@angular/compiler-cli": "~10.2.3",
-        "@types/node": "~14.14.7",
+        "@angular-devkit/build-angular": "~0.1100.4",
+        "@angular/cli": "~11.0.4",
+        "@angular/compiler-cli": "~11.0.4",
+        "@types/node": "~14.14.13",
         "codelyzer": "^6.0.1",
         "svg2ttf": "^5.0.0",
         "svgicons2svgfont": "^9.1.1",
         "svgo": "^1.3.2",
-        "ts-node": "~9.0.0",
+        "ts-node": "~9.1.1",
         "tslint": "~6.1.3",
         "ttf2woff2": "^3.0.0",
         "typescript": "~4.0.5"
@@ -38,5 +38,5 @@
         "build-fonts": "node src/app/components/rc-scanner/build-fonts.js",
         "start": "ng serve"
     },
-    "version": "0.9.5"
+    "version": "0.9.6"
 }
