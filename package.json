@@ -1,6 +1,6 @@
 {
     "name": "rc-scanner",
-    "version": "0.9.6",
+    "version": "0.9.7",
     "private": true,
     "main": "run.js",
     "scripts": {

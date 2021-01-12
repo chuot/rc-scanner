@@ -163,6 +163,13 @@ export class AppRcScannerBcd436HpComponent implements OnDestroy, OnInit {
         this.rcScannerService.send('KEY,F,P');
     }
 
+    @HostListener('document:keydown', ['$event'])
+    onKeyDown(event: KeyboardEvent): void {
+        if (event.code === 'NumpadDecimal') {
+            this.rcScannerService.send('KEY,.,P');
+        }
+    }
+
     @HostListener('document:keydown.l')
     onLightPower(): void {
         if (this.powerOn) {
