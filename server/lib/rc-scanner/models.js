@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- * Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2021 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,10 @@
 
 'use strict';
 
-const models = [
-    { driver: 'uniden-sts', name: 'bcd436hp' },
-];
+export const unidenSts = 'uniden-sts';
+export const unknown = 'unknown';
 
-module.exports = { models };
+export const models = [
+    { driver: unidenSts, name: 'bcd386t' },
+    { driver: unidenSts, name: 'bcd436hp' },
+];

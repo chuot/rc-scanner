@@ -1,4 +1,7 @@
-/.env
-/crash.log
-/database.sqlite
-/node_modules
+.env
+*.crt
+*.pem
+*.key
+config.json*
+dist
+node_modules

@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- * Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2021 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@ const SVGIcons2SVGFontStream = require('svgicons2svgfont');
 const ttf2woff2 = require('ttf2woff2');
 
 const packageJson = require('../../../../../package.json');
+
+const bcd386t = require('./models/bcd386t/bcd386t');
 
 const bcd436hp = require('./models/bcd436hp/bcd436hp');
 
@@ -69,6 +71,15 @@ function buildFont({ fontId, fontName, glyphs, inputDir, metadata, outputDir }) 
 }
 
 buildFont({
+    fontId: 'bcd386t',
+    fontName: 'Uniden BCD386T Font',
+    glyphs: bcd386t,
+    inputDir: './svgs/modern',
+    metadata: `${packageJson.name} ${packageJson.version}`,
+    outputDir: '../../../assets/fonts',
+});
+
+buildFont({
     fontId: 'bcd436hp',
     fontName: 'Uniden BCD436HP Font',
     glyphs: bcd436hp,
@@ -76,4 +87,3 @@ buildFont({
     metadata: `${packageJson.name} ${packageJson.version}`,
     outputDir: '../../../assets/fonts',
 });
-

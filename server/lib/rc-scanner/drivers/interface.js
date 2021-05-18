@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- * Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2021 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,18 @@
  * ****************************************************************************
  */
 
-import { Component } from '@angular/core';
+'use strict';
 
-@Component({
-    selector: 'app-rc-scanner-unsupported',
-    styleUrls: ['./unsupported.component.scss'],
-    templateUrl: './unsupported.component.html',
-})
-export class AppRcScannerUnsupportedComponent { }
+import EventEmitter from 'events';
+
+export class DriverInterface extends EventEmitter {
+    constructor() {
+        super();
+    }
+
+    start() { }
+
+    stop() { }
+
+    write() { }
+}

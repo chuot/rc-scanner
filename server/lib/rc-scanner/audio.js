@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- * Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2021 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,27 +19,14 @@
 
 'use strict';
 
-require('dotenv').config();
+import EventEmitter from 'events';
+import portAudio from 'naudiodon';
 
-const EventEmitter = require('events');
-const portAudio = require('naudiodon');
-
-class Audio extends EventEmitter {
-    constructor() {
-        const config = {
-            deviceId: parseInt(process.env.RC_AUDIO_DEVICE_ID, 10) || -1,
-            reconnectInterval: parseInt(process.env.RC_AUDIO_RECONNECT_INTERVAL, 10) || 5000,
-            sampleRate: parseInt(process.env.RC_AUDIO_SAMPLE_RATE, 10) || 44100,
-            squelch: parseInt(process.env.RC_AUDIO_SQUELCH, 10) || 100,
-        };
-
+export class Audio extends EventEmitter {
+    constructor(ctx) {
         super();
 
-        this.config = config;
-
-        if (!(this instanceof Audio)) {
-            return new Audio();
-        }
+        this.config = ctx.config.audio;
     }
 
     start() {
@@ -71,7 +58,7 @@ class Audio extends EventEmitter {
                 });
 
                 stream.on('error', () => {
-                    console.error('Audio stream error, restarting...');
+                    this.emit('status', 'Audio stream error, restarting...');
 
                     this._stream.abort(() => {
                         setTimeout(() => this._stream = newStream(), this.config.reconnectInterval);
@@ -87,24 +74,22 @@ class Audio extends EventEmitter {
             }
         };
 
-        this._stream = newStream();
+        this.stream = newStream();
 
-        if (!this._stream) {
+        if (!this.stream) {
             const interval = setInterval(() => {
-                this._stream = newStream();
+                this.stream = newStream();
 
-                if (this._stream) {
+                if (this.stream) {
                     clearInterval(interval);
                 }
-            }, this.config.connectionRetryDelay);
+            }, this.config.reconnectInterval);
         }
     }
 
     stop() {
-        if (this._stream) {
-            this._stream.destroy();
+        if (this.stream) {
+            this.stream.destroy();
         }
     }
 }
-
-module.exports = { Audio };

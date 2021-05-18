@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- * Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2021 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,79 +19,53 @@
 
 'use strict';
 
-const EventEmitter = require('events');
-const http = require('http');
-const url = require('url');
-const WebSocket = require('ws');
+import EventEmitter from 'events';
+import { URL } from 'url';
+import WebSocket from 'ws';
 
-
-const { Audio } = require('./audio');
-const { Driver } = require('./drivers');
-
-class Ws extends EventEmitter {
-    constructor(options = {}) {
+export class Ws extends EventEmitter {
+    constructor(ctx) {
         super();
 
-        if (!(this instanceof Ws)) {
-            return new Ws(options);
-        }
+        this.config = ctx.config.webSocket;
 
-        if (!(options.audio instanceof Audio)) {
-            throw new Error('options.audio must be an instance of Audio');
-        }
+        this.audio = ctx.audio;
 
-        if (!(options.driver instanceof Driver)) {
-            throw new Error('options.driver must be an instance of Driver');
-        }
+        this.audioCount = 0;
 
-        if (!(options.httpServer instanceof http.Server)) {
-            throw new Error('options.httpServer must be an instance of http.Server');
-        }
+        this.audioSocket = new WebSocket.Server({ noServer: true });
 
-        if (typeof options.model !== 'string') {
-            throw new Error('options.model must be a an instance of String');
-        }
-
-        this.config = {
-            keepAlive: parseInt(process.env.RC_WEBSOCKET_KEEP_ALIVE, 10) || 60000,
-            reconnectInterval: parseInt(process.env.RC_WEBSOKECT_RECONNECT_INTERVAL, 10) || 5000,
-        };
-
-        this._audio = options.audio;
-
-        this._audioSocket = new WebSocket.Server({ noServer: true });
-
-        this._audioSocket.on('connection', (ws) => {
+        this.audioSocket.on('connection', (ws) => {
             const audioHandler = (data) => ws.send(data);
 
-            this._audioCount++;
+            this.audioCount++;
 
-            this._audio.on('data', audioHandler);
+            this.audio.on('data', audioHandler);
 
-            if (this._audioCount === 1) {
-                this._audio.start();
+            if (this.audioCount === 1) {
+                this.audio.start();
             }
 
             ws.isAlive = true;
 
             ws.on('close', () => {
-                this._audioCount--;
+                this.audioCount--;
 
-                this._audio.removeListener('data', audioHandler);
+                this.audio.removeListener('data', audioHandler);
 
-                if (this._audioCount === 0) {
-                    this._audio.stop();
+                if (this.audioCount === 0) {
+                    this.audio.stop();
                 }
             });
 
             ws.on('pong', () => ws.isAlive = true);
         });
 
-        this._audioCount = 0;
+        this.controlCount = 0;
 
-        this._controlSocket = new WebSocket.Server({ noServer: true });
+        this.controlSocket = new WebSocket.Server({ noServer: true });
 
-        this._controlSocket.on('connection', (ws) => {
+        this.controlSocket.on('connection', (ws) => {
             let previousData;
 
             const driverHandler = (data) => {
@@ -100,57 +74,53 @@ class Ws extends EventEmitter {
 
                     ws.send(data);
                 }
-            }
+            };
 
-            this._controlCount++;
+            this.controlCount++;
 
-            this._driver.on('data', driverHandler);
+            this.driver.on('data', driverHandler);
 
-            if (this._controlCount === 1) {
-                this._driver.start();
+            if (this.controlCount === 1) {
+                this.driver.start();
             }
 
             ws.isAlive = true;
 
             ws.on('close', () => {
-                this._controlCount--;
+                this.controlCount--;
 
-                this._driver.removeListener('data', driverHandler);
+                this.driver.removeListener('data', driverHandler);
 
-                if (this._controlCount === 0) {
-                    this._driver.stop();
+                if (this.controlCount === 0) {
+                    this.driver.stop();
                 }
-
             });
 
-            ws.on('message', (message) => this._driver.write(message));
+            ws.on('message', (message) => this.driver.write(message));
 
             ws.on('pong', () => {
                 ws.isAlive = true;
             });
         });
 
-        this._controlCount = 0;
 
-        this._driver = options.driver;
+        this.driver = ctx.driver;
 
-        this._httpServer = options.httpServer;
+        this.httpServer = ctx.httpServer;
 
-        this._httpServer.on('upgrade', (req, socket, head) => {
-            const path = url.parse(req.url).pathname;
+        this.httpServer.on('upgrade', (req, socket, head) => {
+            const pathname = new URL(req.url, `http://${req.headers.host}`).pathname;
 
-            if (path === '/audio') {
-                this._audioSocket.handleUpgrade(req, socket, head, (ws) => this._audioSocket.emit('connection', ws, req));
+            if (pathname === '/audio') {
+                this.audioSocket.handleUpgrade(req, socket, head, (ws) => this.audioSocket.emit('connection', ws, req));
 
-            } else if (path === '/control') {
-                this._controlSocket.handleUpgrade(req, socket, head, (ws) => this._controlSocket.emit('connection', ws, req));
+            } else if (pathname === '/control') {
+                this.controlSocket.handleUpgrade(req, socket, head, (ws) => this.controlSocket.emit('connection', ws, req));
 
             } else {
                 socket.destroy();
             }
         });
-
-        this._model = options.model;
 
         setInterval(() => {
             const check = (ws) => {
@@ -161,13 +131,11 @@ class Ws extends EventEmitter {
                 ws.isAlive = false;
 
                 ws.ping();
-            }
+            };
 
-            this._audioSocket.clients.forEach(check);
+            this.audioSocket.clients.forEach(check);
 
-            this._controlSocket.clients.forEach(check);
+            this.controlSocket.clients.forEach(check);
         }, this.config.keepAlive);
     }
 }
-
-module.exports = { Ws };

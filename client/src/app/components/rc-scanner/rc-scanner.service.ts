@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- * Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2021 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { EventEmitter, Inject, Injectable, OnDestroy } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { timer } from 'rxjs';
 
 declare global {
@@ -68,6 +69,7 @@ export class AppRcScannerService implements OnDestroy {
     constructor(
         @Inject(DOCUMENT) private document: Document,
         private httpClient: HttpClient,
+        private title: Title,
     ) {
         this.bootstrapAudio();
 
@@ -155,7 +157,10 @@ export class AppRcScannerService implements OnDestroy {
 
         const bootstrap = async () => {
             if (!this.audioContext) {
-                this.audioContext = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'balanced' });
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)({
+                    latencyHint: 'balanced',
+                    sampleRate: this.scannerConfig?.sampleRate,
+                });
             }
 
             if (this.audioContext) {
@@ -222,6 +227,8 @@ export class AppRcScannerService implements OnDestroy {
 
         this.httpClient.get<AppRcScannerConfig>(url).subscribe((config) => {
             this.scannerConfig = config;
+
+            this.title.setTitle(`${this.title.getTitle()} ↔ ${this.scannerConfig.model.toUpperCase()}`);
 
             this.config.emit(config);
         });

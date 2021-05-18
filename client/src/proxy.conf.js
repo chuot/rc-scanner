@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- * Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2021 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,32 @@
  * ****************************************************************************
  */
 
+'use strict';
+
+const server = 'http://localhost:3000';
+
 const PROXY_CONFIG = [
     {
-        "context": [
-            "/audio",
-            "/config",
-            "/control"
-        ],
-        "target": "http://localhost:3000",
-        "secure": false,
-        "ws": true
+        bypass: (req) => req.upgrade ? null : '/',
+        context: '/',
+        secure: false,
+        target: server,
+        ws: true,
+    },
+    {
+        context: ['/audio'],
+        secure: false,
+        target: server,
+    },
+    {
+        context: ['/config'],
+        secure: false,
+        target: server,
+    },
+    {
+        context: ['/control'],
+        secure: false,
+        target: server,
     }
 ];
 

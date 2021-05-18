@@ -29,296 +29,278 @@ $led-white: #e6e6e6;
 $led-yellow: #e6e632;
 
 @font-face {
-	font-family: 'BCD436HP';
-	src: url(../../../../../assets/fonts/bcd436hp.woff2) format('woff2');
-	unicode-range: U+0000-007F, U+E000-E0FF, U+E100-E1FF;
+  font-family: "BCD436HP";
+  src: url(../../../../../assets/fonts/bcd436hp.woff2) format("woff2");
+  unicode-range: U+0000-007F, U+E000-E0FF, U+E100-E1FF;
 }
 
 :host {
-	background-color: $body-bgcolor;
-	border-radius: 8px;
-	display: block;
-    padding: 16px;
-    user-select: none;
+  background-color: $body-bgcolor;
+  display: block;
+  padding: 16px;
+  user-select: none;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+
+  .aboveline {
+    text-decoration-line: overline;
+  }
+
+  .button {
+    border-style: solid;
+    border-width: 1px;
+    border-bottom-color: rgba(0, 0, 0, 0.87);
+    border-left-color: rgba(255, 255, 255, 0.7);
+    border-right-color: rgba(0, 0, 0, 0.87);
+    border-top-color: rgba(255, 255, 255, 0.7);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    height: 40px;
+    line-height: 14px;
+    margin: auto;
+    max-width: 100px;
+    padding: 0;
+    position: relative;
+    width: 100%;
+
+    &:active,
+    &:focus {
+      outline: none;
+    }
+
+    &:active {
+      top: 2px;
+      transform: scale(0.98);
+      transform-origin: bottom center;
+    }
+
+    &.raised-dot::after {
+      background-color: $dimmer-color-1;
+      border-radius: 50%;
+      box-shadow: 1px 1px 1px white inset, -1px -1px 1px black inset,
+        0 0 1px 1px black;
+      content: "";
+      display: block;
+      height: 4px;
+      left: 60%;
+      position: absolute;
+      top: calc(50% - 2px);
+      width: 4px;
+    }
+  }
+
+  .button-group {
+    &.style-1 button {
+      background-color: $button-bgcolor-1;
+      color: $button-color-1;
+    }
+    &.style-2 button {
+      background-color: $button-bgcolor-2;
+      color: $button-color-2;
+    }
+    &.style-3 button {
+      background-color: $button-bgcolor-3;
+      color: $button-color-3;
+    }
+  }
+
+  .button-wrapper {
+    padding: 4px;
+  }
+
+  .digit {
+    font-size: 185%;
+  }
+
+  .highlight {
+    color: $highlight-color;
+  }
+
+  .icon {
+    bottom: 4px;
+    position: absolute;
+    right: 4px;
+  }
+
+  .italic {
+    font-style: italic;
+  }
+
+  .small {
+    font-size: 85%;
+    line-height: 85%;
+    margin-top: 2px;
+  }
+}
+
+.display {
+  align-items: center;
+  background-color: $dimmer-color-1;
+  box-shadow: 2px 2px 4px black inset, 1px 1px 2px 1px white;
+  box-sizing: border-box;
+  color: $display-color;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  font-family: "BCD436HP";
+  height: 256px;
+  justify-content: center;
+  padding: 8px;
+  width: 370px;
+  white-space: pre-wrap;
+
+  .large {
+    font-size: $display-font-size;
+    line-height: $display-font-size;
+  }
+
+  .line {
+    margin: 0;
+  }
+
+  .reverse {
+    background-color: $display-color;
+    color: $dimmer-color-1;
+  }
+
+  .small {
+    font-size: $display-font-size;
+    line-height: calc(#{$display-font-size} / 2);
+    transform: scaleY(0.5);
+  }
+
+  .underline {
+    border-bottom: 1px solid $display-color;
+  }
 }
 
 .control,
 .display {
-	margin-top: 1em;
-}
-
-.control {
-	.aboveline {
-		text-decoration-line: overline;
-	}
-
-	.button {
-		border: none;
-		border-radius: 4px;
-		box-shadow: 1px 1px 2px white inset, -1px -1px 1px black inset, 0 0 2px 2px black;
-		font-family: inherit;
-		font-size: 12px;
-		font-weight: 500;
-		height: 40px;
-		line-height: 14px;
-		margin: auto;
-		max-width: 100px;
-		padding: 0;
-		position: relative;
-		text-shadow: 0 0 4px rgba(0, 0, 0, .5);
-		width: 100%;
-
-		&:active,
-		&:focus {
-			outline: none;
-		}
-
-		&:active {
-			top: 4px;
-            transform: scale(.98);
-            transform-origin: bottom center;
-		}
-
-		&.raised-dot::after {
-			background-color: $dimmer-color-1;
-			border-radius: 50%;
-			box-shadow: 1px 1px 1px white inset, -1px -1px 1px black inset, 0 0 1px 1px black;
-			content: '';
-			display: block;
-			height: 4px;
-			left: 60%;
-			position: absolute;
-			top: calc(50% - 2px);
-			width: 4px;
-		}
-	}
-
-	.button-group-1,
-	.button-group-2 {
-		margin-bottom: .25em;
-	}
-
-	.button-group-1 button {
-		background-color: $button-bgcolor-1;
-		color: $button-color-1;
-	}
-
-	.button-group-2 button {
-		background-color: $button-bgcolor-2;
-		color: $button-color-2;
-	}
-
-	.button-group-3 button {
-		background-color: $button-bgcolor-3;
-		color: $button-color-3;
-	}
-
-	.button-wrapper {
-		padding: 4px;
-	}
-
-	.digit {
-		font-size: 185%;
-	}
-
-	.highlight {
-		color: $highlight-color;
-	}
-
-	.icon {
-		bottom: 4px;
-		position: absolute;
-		right: 4px;
-	}
-
-	.italic {
-		font-style: italic;
-	}
-
-	.small {
-		font-size: 85%;
-        line-height: 85%;
-        margin-top: 2px;
-	}
-}
-
-.display {
-    align-items: center;
-	background-color: $dimmer-color-1;
-	border-radius: 4px;
-	box-shadow: 2px 2px 4px black inset, 1px 1px 2px 1px white;
-	box-sizing: border-box;
-    color: $display-color;
-    cursor: default;
-    display: flex;
-    flex-direction: column;
-    font-family: 'BCD436HP';
-	height: 256px;
-    justify-content: center;
-	padding: 8px;
-	width: 370px;
-    white-space: pre-wrap;
-
-	.large {
-		font-size: $display-font-size;
-		line-height: $display-font-size;
-	}
-
-	.line {
-		margin: 0;
-	}
-
-	.reverse {
-		background-color: $display-color;
-		color: $dimmer-color-1;
-	}
-
-	.small {
-		font-size: $display-font-size;
-		line-height: calc(#{$display-font-size} / 2);
-		transform: scaleY(.5);
-	}
-
-	.underline {
-		border-bottom: 1px solid $display-color;
-	}
+  margin-top: 1em;
 }
 
 .led {
-	background-color: $led-black;
-	border-radius: 2px;
-	height: 12px;
-	margin-left: auto;
-	width: 24px;
+  background-color: $led-black;
+  height: 12px;
+  margin-left: auto;
+  width: 24px;
 
-	&.blue {
-		background-color: $led-blue;
-		box-shadow: 0 0 6px 3px $led-blue;
-	}
+  &.blue {
+    background-color: $led-blue;
+    box-shadow: 0 0 6px 3px $led-blue;
+  }
 
-	&.cyan {
-		background-color: $led-cyan;
-		box-shadow: 0 0 6px 3px $led-cyan;
-	}
+  &.cyan {
+    background-color: $led-cyan;
+    box-shadow: 0 0 6px 3px $led-cyan;
+  }
 
-	&.green {
-		background-color: $led-green;
-		box-shadow: 0 0 6px 3px $led-green;
-	}
+  &.green {
+    background-color: $led-green;
+    box-shadow: 0 0 6px 3px $led-green;
+  }
 
-	&.magenta {
-		background-color: $led-magenta;
-		box-shadow: 0 0 6px 3px $led-magenta;
-	}
+  &.magenta {
+    background-color: $led-magenta;
+    box-shadow: 0 0 6px 3px $led-magenta;
+  }
 
-	&.red {
-		background-color: $led-red;
-		box-shadow: 0 0 6px 3px $led-red;
-	}
+  &.red {
+    background-color: $led-red;
+    box-shadow: 0 0 6px 3px $led-red;
+  }
 
-	&.yellow {
-		background-color: $led-yellow;
-		box-shadow: 0 0 6px 3px $led-yellow;
-	}
+  &.yellow {
+    background-color: $led-yellow;
+    box-shadow: 0 0 6px 3px $led-yellow;
+  }
 
-	&.white {
-		background-color: $led-white;
-		box-shadow: 0 0 6px 3px $led-white;
-	}
+  &.white {
+    background-color: $led-white;
+    box-shadow: 0 0 6px 3px $led-white;
+  }
 }
 
 .dimmer-low {
-	.control {
-		.button.raised-dot::after {
-			background-color: $dimmer-color-2;
-			// box-shadow: 0 0 1px $dimmer-color-2;
-		}
+  .control {
+    .button.raised-dot::after {
+      background-color: $dimmer-color-2;
+    }
+  }
 
-		// .button-group-1,
-		// .button-group-2 {
-		// 	.button {
-		// 		color: $dimmer-color-2;
-		// 		text-shadow: 0 0 1px $dimmer-color-2;
-		// 	}
-		// }
+  .display {
+    background-color: $dimmer-color-2;
 
-		// .button-group-3 {
-		// 	.button {
-		// 		background-color: $dimmer-color-2;
-		// 	}
-		// }
-	}
-
-	.display {
-		background-color: $dimmer-color-2;
-
-		.reverse {
-			background-color: $display-color;
-			color: $dimmer-color-2;
-		}
-	}
+    .reverse {
+      background-color: $display-color;
+      color: $dimmer-color-2;
+    }
+  }
 }
 
 .dimmer-middle {
-	.control {
-		.button.raised-dot::after {
-			background-color: $dimmer-color-3;
-			// box-shadow: 0 0 1px $dimmer-color-3;
-		}
+  .control {
+    .button.raised-dot::after {
+      background-color: $dimmer-color-3;
+    }
+  }
 
-		// .button-group-1,
-		// .button-group-2 {
-		// 	.button {
-		// 		color: $dimmer-color-3;
-		// 		text-shadow: 0 0 1px $dimmer-color-3;
-		// 	}
-		// }
+  .display {
+    background-color: $dimmer-color-3;
 
-		// .button-group-3 {
-		// 	.button {
-		// 		background-color: $dimmer-color-3;
-		// 	}
-		// }
-	}
-
-	.display {
-		background-color: $dimmer-color-3;
-
-		.reverse {
-			background-color: $display-color;
-			color: $dimmer-color-3;
-		}
-	}
+    .reverse {
+      background-color: $display-color;
+      color: $dimmer-color-3;
+    }
+  }
 }
 
 .dimmer-high {
-	.control {
-		.button.raised-dot::after {
-			background-color: $dimmer-color-4;
-			// box-shadow: 0 0 1px $dimmer-color-4;
-		}
+  .control {
+    .button.raised-dot::after {
+      background-color: $dimmer-color-4;
+    }
+  }
 
-		// .button-group-1,
-		// .button-group-2 {
-		// 	.button {
-		// 		color: $dimmer-color-4;
-		// 		text-shadow: 0 0 1px $dimmer-color-4;
-		// 	}
-		// }
+  .display {
+    background-color: $dimmer-color-4;
 
-		// .button-group-3 {
-		// 	.button {
-		// 		background-color: $dimmer-color-4;
-		// 	}
-		// }
-	}
+    .reverse {
+      background-color: $display-color;
+      color: $dimmer-color-4;
+    }
+  }
+}
 
-	.display {
-		background-color: $dimmer-color-4;
+@each $flex in 20, 25, 40, 60, 50, 100 {
+  .flex-#{$flex} {
+    flex: 0 1 #{$flex + "%"};
+  }
+}
 
-		.reverse {
-			background-color: $display-color;
-			color: $dimmer-color-4;
-		}
-	}
+.flex-center {
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-col,
+.flex-row {
+  box-sizing: border-box;
+  display: flex;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
 }

@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- * Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2021 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,18 +19,22 @@
 
 'use strict';
 
-const EventEmitter = require('events');
+import { DriverInterface } from './interface.js';
 
-class Driver extends EventEmitter {
-    constructor() {
+export class Unknown extends DriverInterface {
+    constructor(ctx) {
         super();
+
+        this.com = ctx.com;
+
+        this.config = ctx.config;
+
+        this.pollInterval = null;
     }
 
     start() { }
 
     stop() { }
 
-    write() { }
+    write(data) { }
 }
-
-module.exports = { Driver };

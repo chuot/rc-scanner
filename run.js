@@ -1,6 +1,8 @@
+#!/usr/bin/env node
+
 /*
  * *****************************************************************************
- * Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2021 Chrystian Huot <chrystian.huot@saubeo.solutions>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,103 +21,48 @@
 
 'use strict';
 
-const childProcess = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { execSync } from 'child_process';
+import { existsSync } from 'fs';
+import path from 'path';
+import url from 'url';
 
-const clientPath = path.resolve(__dirname, 'client');
-const serverPath = path.resolve(__dirname, 'server');
+const dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
-const missingModules = {
-    client: !fs.existsSync(path.resolve(clientPath, 'node_modules')),
-    server: !fs.existsSync(path.resolve(serverPath, 'node_modules')),
-}
+try {
+    const stdio = `${!!process.env.DEBUG}` === 'true' ? 'inherit' : 'pipe';
 
-if (missingModules.client || missingModules.server) {
-    process.stdout.write('Installing node modules...');
+    const clientPath = path.resolve(dirname, 'client');
+    const serverPath = path.resolve(dirname, 'server');
 
-    if (missingModules.client) {
-        childProcess.execSync('npm ci', { cwd: clientPath, stdio: ['ignore', 'ignore', 'pipe'] });
+    const missingModules = {
+        client: !existsSync(path.resolve(clientPath, 'node_modules')),
+        server: !existsSync(path.resolve(serverPath, 'node_modules')),
     }
 
-    if (missingModules.server) {
-        childProcess.execSync('npm ci', { cwd: serverPath, stdio: ['ignore', 'ignore', 'pipe'] });
+    if (missingModules.client || missingModules.server) {
+        process.stdout.write('Installing node modules...');
+
+        if (missingModules.client) {
+            execSync('npm ci', { cwd: clientPath, stdio });
+        }
+
+        if (missingModules.server) {
+            execSync('npm ci', { cwd: serverPath, stdio });
+        }
+
+        process.stdout.write(' done\n');
     }
 
-    process.stdout.write(' done\n');
-}
-
-if (!fs.existsSync(path.resolve(clientPath, 'dist/rc-scanner/index.html'))) {
-    process.stdout.write('Building client app...');
-    childProcess.execSync('npm run build', { cwd: clientPath, stdio: ['ignore', 'ignore', 'pipe'] });
-    process.stdout.write(' done\n');
-}
-
-const envFile = path.resolve(serverPath, '.env');
-
-if (fs.existsSync(envFile)) {
-    require(path.resolve(serverPath, 'node_modules/dotenv')).config({ path: envFile });
-
-    childProcess.execSync('node index.js', { cwd: serverPath, stdio: 'inherit' });
-
-} else {
-    const { models } = require(path.resolve(serverPath, 'lib/rc-scanner/models'));
-
-    const rl = require('readline').createInterface({ input: process.stdin, output: process.stdout });
-
-    const askModel = () => {
-        process.stdout.write('\nPlease select one of the following scanner model:\n\n');
-
-        models.forEach((model, index) => process.stdout.write(`(${index + 1}) ${model.name}\n`));
-
-        rl.question('\nEnter model: ', (answer) => {
-            answer = parseInt(answer, 10);
-
-            if (answer >= 1 && answer <= models.length) {
-                model = models[answer - 1].name;
-                rl.close();
-
-            } else {
-                process.stdout.write('\n!!! Invalid answer !!!\n\n');
-                askModel();
-            }
-        });
+    if (!existsSync(path.resolve(clientPath, 'dist/rdio-scanner/index.html'))) {
+        process.stdout.write('Building client app...');
+        execSync('npm run build', { cwd: clientPath, stdio });
+        process.stdout.write(' done\n');
     }
 
-    let model;
+    const args = process.argv.slice(2).join(' ');
 
-    rl.on('close', () => {
-        const comPort = process.platform === 'win32' ? 'com1' : '/dev/ttyACM0';
+    execSync(`node . ${args}`, { cwd: serverPath, stdio: 'inherit' });
 
-        const data = [
-            `NODE_ENV=production`,
-            `NODE_HOST=0.0.0.0`,
-            `NODE_PORT=3000`,
-            ``,
-            `RC_MODEL=${model}`,
-            `RC_HIDE_SERIAL_NUMBER=false`,
-            ``,
-            `RC_AUDIO_DEVICE_ID=-1`,
-            `RC_AUDIO_SAMPLE_RATE=44100`,
-            `RC_AUDIO_SQUELCH=100`,
-            ``,
-            `RC_COM_BAUDRATE=115200`,
-            `RC_COM_DATABITS=8`,
-            `RC_COM_PARITY=none`,
-            `RC_COM_PORT=${comPort}`,
-            `RC_COM_RTSCTS=false`,
-            `RC_COM_STOPBITS=1`,
-            ``,
-        ].join('\n');
-
-        fs.writeFileSync(envFile, data);
-
-        process.stdout.write(`\nDefault configuration created at ${envFile}.\n`);
-        process.stdout.write(`\nPlease review them, then re-run the application.\n`);
-        process.stdout.write(`\n${data}\n`);
-
-        process.exit(0);
-    });
-
-    askModel();
+} catch (error) {
+    process.stderr.write('\n\nAn error has occured. Please re-run the command like this: \'DEBUG=true node run.js\'\n');
 }

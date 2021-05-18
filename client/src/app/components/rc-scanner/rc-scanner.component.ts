@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- * Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2021 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import { Subscription } from 'rxjs';
 import { AppRcScannerConfig, AppRcScannerService } from './rc-scanner.service';
 
 @Component({
-    selector: 'app-rc-scanner',
+    selector: 'rc-scanner',
     styleUrls: ['./rc-scanner.component.scss'],
     templateUrl: './rc-scanner.component.html',
 })

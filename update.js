@@ -1,6 +1,8 @@
+#!/usr/bin/env node
+
 /*
  * *****************************************************************************
- * Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2021 Chrystian Huot <chrystian.huot@saubeo.solutions>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,26 +21,36 @@
 
 'use strict';
 
-const childProcess = require('child_process');
-const path = require('path');
+import { execSync } from 'child_process';
+import path from 'path';
+import url from 'url';
 
-const clientPath = path.resolve(__dirname, 'client');
-const serverPath = path.resolve(__dirname, 'server');
+const dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
-process.stdout.write('Pulling new version from github...');
-childProcess.execSync('git reset --hard', { stdio: ['ignore', 'ignore', 'pipe'] });
-childProcess.execSync('git pull', { stdio: ['ignore', 'ignore', 'pipe'] });
-process.stdout.write(' done\n');
+try {
+    const stdio = `${!!process.env.DEBUG}` === 'true' ? 'inherit' : 'pipe';
 
-process.stdout.write('Updating node modules...');
-childProcess.execSync('npm ci', { cwd: clientPath, stdio: ['ignore', 'ignore', 'pipe'] });
-childProcess.execSync('npm prune', { cwd: clientPath, stdio: ['ignore', 'ignore', 'pipe'] });
-childProcess.execSync('npm ci', { cwd: serverPath, stdio: ['ignore', 'ignore', 'pipe'] });
-childProcess.execSync('npm prune', { cwd: serverPath, stdio: ['ignore', 'ignore', 'pipe'] });
-process.stdout.write(' done\n');
+    const clientPath = path.resolve(dirname, 'client');
+    const serverPath = path.resolve(dirname, 'server');
 
-process.stdout.write('Building client app...');
-childProcess.execSync('npm run build', { cwd: clientPath, stdio: ['ignore', 'ignore', 'pipe'] });
-process.stdout.write(' done\n');
+    process.stdout.write('Pulling new version from github...');
+    execSync('git reset --hard', { stdio });
+    execSync('git pull', { stdio });
+    process.stdout.write(' done\n');
 
-process.stdout.write('Please restart RC Scanner\n')
+    process.stdout.write('Updating node modules...');
+    execSync('npm ci', { cwd: clientPath, stdio });
+    execSync('npm prune', { cwd: clientPath, stdio });
+    execSync('npm ci', { cwd: serverPath, stdio });
+    execSync('npm prune', { cwd: serverPath, stdio });
+    process.stdout.write(' done\n');
+
+    process.stdout.write('Building client app...');
+    execSync('npm run build', { cwd: clientPath, stdio });
+    process.stdout.write(' done\n');
+
+    process.stdout.write('Please restart Rdio Scanner\n');
+
+} catch (error) {
+    process.stderr.write('\n\nAn error has occured. Please re-run the command like this: \'DEBUG=true node run.js\'\n');
+}

@@ -18,11 +18,11 @@
  */
 
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { AppRcScannerMessage, AppRcScannerService } from '../../rc-scanner.service';
 
 // @ts-ignore
-import * as glyphs from './bcd436hp.js';
+import * as glyphs from './bcd386t.js';
 
 interface Display {
     mode: string[];
@@ -32,18 +32,18 @@ interface Display {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'rc-scanner-bcd436hp',
-    styleUrls: ['./bcd436hp.component.scss'],
-    templateUrl: './bcd436hp.component.html',
+    selector: 'rc-scanner-bcd386t',
+    styleUrls: ['./bcd386t.component.scss'],
+    templateUrl: './bcd386t.component.html',
 })
-export class AppRcScannerBcd436hpComponent implements OnDestroy, OnInit {
-    dimmer = 0;
-
-    led = 'OFF';
+export class AppRcScannerBcd386tComponent implements OnDestroy, OnInit {
+    backlight = false;
 
     powerOn = false;
 
     readonly display: Display[] = [];
+
+    private fnKeyTimerSubscription: Subscription | null = null;
 
     private unknownGlyphs: string[] = [];
 
@@ -68,21 +68,6 @@ export class AppRcScannerBcd436hpComponent implements OnDestroy, OnInit {
                 this.parseData(message.data);
             }
         });
-    }
-
-    @HostListener('document:keydown.a')
-    onAvoid(): void {
-        this.rcScannerService.send('KEY,L,P');
-    }
-
-    @HostListener('document:keydown.h')
-    onChan(): void {
-        this.rcScannerService.send('KEY,C,P');
-    }
-
-    @HostListener('document:keydown.d')
-    onDept(): void {
-        this.rcScannerService.send('KEY,B,P');
     }
 
     @HostListener('document:keydown.1')
@@ -160,7 +145,21 @@ export class AppRcScannerBcd436hpComponent implements OnDestroy, OnInit {
 
     @HostListener('document:keydown.f')
     onFunction(): void {
-        this.rcScannerService.send('KEY,F,P');
+        if (this.fnKeyTimerSubscription) {
+            this.fnKeyTimerSubscription?.unsubscribe();
+            this.fnKeyTimerSubscription = null;
+
+            this.rcScannerService.send('KEY,F,R');
+
+        } else {
+            this.fnKeyTimerSubscription = timer(3000).subscribe(() => {
+                this.fnKeyTimerSubscription = null;
+
+                this.rcScannerService.send('KEY,F,R');
+            });
+
+            this.rcScannerService.send('KEY,F,H');
+        }
     }
 
     @HostListener('document:keydown', ['$event'])
@@ -170,10 +169,15 @@ export class AppRcScannerBcd436hpComponent implements OnDestroy, OnInit {
         }
     }
 
-    @HostListener('document:keydown.l')
+    @HostListener('document:keydown.h')
+    onHold(): void {
+        this.rcScannerService.send('KEY,H,P');
+    }
+
+    // @HostListener('document:keydown.l')
     onLightPower(): void {
         if (this.powerOn) {
-            this.rcScannerService.send('KEY,V,P');
+            this.rcScannerService.send('KEY,P,P');
 
         } else {
             this.powerOn = true;
@@ -182,19 +186,19 @@ export class AppRcScannerBcd436hpComponent implements OnDestroy, OnInit {
         }
     }
 
+    @HostListener('document:keydown.l')
+    onLockOut(): void {
+        this.rcScannerService.send('KEY,L,P');
+    }
+
     @HostListener('document:keydown.m')
     onMenu(): void {
         this.rcScannerService.send('KEY,M,P');
     }
 
-    @HostListener('document:keydown.r')
-    onReplayRecord(): void {
-        this.rcScannerService.send('KEY,Y,P');
-    }
-
     @HostListener('document:keydown.s')
-    onSystem(): void {
-        this.rcScannerService.send('KEY,A,P');
+    onScan(): void {
+        this.rcScannerService.send('KEY,S,P');
     }
 
     @HostListener('document:keydown.arrowleft')
@@ -216,11 +220,6 @@ export class AppRcScannerBcd436hpComponent implements OnDestroy, OnInit {
         this.rcScannerService.send('KEY,^,P');
     }
 
-    @HostListener('document:keydown.z')
-    onZipServices(): void {
-        this.rcScannerService.send('KEY,Z,P');
-    }
-
     toggleFullscreen(): void {
         this.rcScannerService.toggleFullscreen();
     }
@@ -233,7 +232,7 @@ export class AppRcScannerBcd436hpComponent implements OnDestroy, OnInit {
 
     private processStatus(message: string): void {
         const sep = ',';
-        const lineLength = 24;
+        const lineLength = 16;
 
         let data: string | string[] = message;
 
@@ -280,9 +279,7 @@ export class AppRcScannerBcd436hpComponent implements OnDestroy, OnInit {
 
             data = data.split(sep);
 
-            this.led = data[7]?.toLowerCase();
-
-            this.dimmer = parseInt(data[8], 10);
+            this.backlight = data[0] === '1';
 
             this.display.splice(0, this.display.length, ...display);
 

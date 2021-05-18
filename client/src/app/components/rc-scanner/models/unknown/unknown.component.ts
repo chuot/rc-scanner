@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- * Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2021 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,11 @@
  * ****************************************************************************
  */
 
-'use strict';
+import { Component } from '@angular/core';
 
-console.log(require('naudiodon').getDevices());
+@Component({
+    selector: 'rc-scanner-unknown',
+    styleUrls: ['./unknown.component.scss'],
+    templateUrl: './unknown.component.html',
+})
+export class AppRcScannerUnknownComponent { }

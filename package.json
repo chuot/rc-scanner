@@ -1,14 +1,18 @@
 {
-    "name": "rc-scanner",
-    "version": "0.9.7",
-    "private": true,
+    "author": "Chrystian Huot",
+    "engines": {
+        "node": ">=14.0"
+    },
+    "license": "LICENSE",
     "main": "run.js",
+    "name": "rc-scanner",
+    "private": true,
     "scripts": {
-        "list-audio": "cd server; npm run list-audio",
+        "list-audio": "node server list-audio",
+        "list-models": "node server list-models",
         "start": "node run.js",
         "update": "node update.js"
     },
-    "author": "Chrystian Huot",
-    "license": "LICENSE",
-    "homepage": "https://github.com/chuot/rc-scanner"
+    "type": "module",
+    "version": "0.10.0"
 }

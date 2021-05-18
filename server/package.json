@@ -1,25 +1,41 @@
 {
-    "name": "rc-scanner-server",
-    "version": "0.9.7",
-    "private": true,
-    "main": "index.js",
-    "scripts": {
-        "list-audio": "node lib/rc-scanner/get-devices.js",
-        "start": "nodemon index"
-    },
-    "author": "Chrystian Huot",
-    "license": "LICENSE",
+    "author": "Chrystian Huot <chrystian.huot@saubeo.solutions>",
     "dependencies": {
+        "compression": "^1.7.4",
         "cors": "^2.8.5",
-        "dotenv": "^8.2.0",
+        "dotenv": "^9.0.2",
         "express": "^4.17.1",
-        "helmet": "^4.3.1",
-        "naudiodon": "^2.3.1",
+        "helmet": "^4.6.0",
+        "naudiodon": "^2.3.4",
         "nodemon": "^2.0.7",
-        "serialport": "^9.0.4",
-        "ws": "^7.4.2"
+        "serialport": "^9.0.7",
+        "ws": "^7.4.5"
     },
     "devDependencies": {
-        "eslint": "^7.17.0"
-    }
+        "eslint": "^7.26.0",
+        "webpack": "^5.37.0",
+        "webpack-cli": "^4.7.0",
+        "webpack-node-externals": "^3.0.0"
+    },
+    "engines": {
+        "node": ">=14.0"
+    },
+    "license": "LICENSE",
+    "main": "index.js",
+    "name": "rc-scanner-server",
+    "nodemonConfig": {
+        "ext": "js, json",
+        "ignore": [
+            "config.json"
+        ]
+    },
+    "private": true,
+    "scripts": {
+        "build": "webpack",
+        "list-audio": "node index.js list-audio",
+        "list-models": "node index.js list-models",
+        "start": "nodemon index"
+    },
+    "type": "module",
+    "version": "0.10.0"
 }

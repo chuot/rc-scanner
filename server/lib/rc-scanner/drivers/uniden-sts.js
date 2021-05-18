@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- * Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2021 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,33 +19,15 @@
 
 'use strict';
 
-require('dotenv').config();
+import { DriverInterface } from './interface.js';
 
-const { Com } = require('../com');
-
-const { Driver } = require('./index');
-
-class UnidenSts extends Driver {
-    constructor(options = {}) {
+export class UnidenSts extends DriverInterface {
+    constructor(ctx) {
         super();
 
-        if (!(this instanceof UnidenSts)) {
-            return new UnidenSts(options);
-        }
+        this.com = ctx.com;
 
-        if (!(options.com instanceof Com)) {
-            throw new Error('options.com must be an instanceof Com');
-        }
-
-        this.config = {
-            hideSerialNumber: typeof process.env.RC_HIDE_SERIAL_NUMBER === 'string' &&
-                process.env.RC_HIDE_SERIAL_NUMBER.toLowerCase() === 'true',
-            pollingInterval: process.env.RC_POLLING_INTERVAL || 500,
-        };
-
-        this._com = options.com;
-
-        this._com.on('data', (dataArray) => {
+        this.com.on('data', (dataArray) => {
             let data = dataArray.toString();
 
             if (this.config.hideSerialNumber) {
@@ -55,26 +37,26 @@ class UnidenSts extends Driver {
             this.emit('data', data);
         });
 
-        this._pollInterval = undefined;
+        this.config = ctx.config;
+
+        this.pollInterval = null;
     }
 
     start() {
-        if (!this._pollInterval) {
-            this._pollInterval = setInterval(() => this._com.write('STS'), this.config.pollingInterval);
+        if (!this.pollInterval) {
+            this.pollInterval = setInterval(() => this.com.write('STS'), this.config.com.pollingInterval);
         }
     }
 
     stop() {
-        if (this._pollInterval) {
-            clearInterval(this._pollInterval);
+        if (this.pollInterval) {
+            clearInterval(this.pollInterval);
 
-            this._pollInterval = undefined;
+            this.pollInterval = null;
         }
     }
 
     write(data) {
-        this._com.write(data);
+        this.com.write(data);
     }
 }
-
-module.exports = UnidenSts;

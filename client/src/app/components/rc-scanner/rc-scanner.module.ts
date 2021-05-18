@@ -1,6 +1,6 @@
 /*
  * *****************************************************************************
- * Copyright (C) 2019-2020 Chrystian Huot
+ * Copyright (C) 2019-2021 Chrystian Huot
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,23 +19,21 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FlexModule } from '@angular/flex-layout';
-import { AppRcScannerBcd436HpComponent } from './models/bcd436hp/bcd436hp.component';
-import { AppRcScannerUnsupportedComponent } from './models/unsupported/unsupported.component';
+import { AppRcScannerBcd386tComponent } from './models/bcd386t/bcd386t.component';
+import { AppRcScannerBcd436hpComponent } from './models/bcd436hp/bcd436hp.component';
+import { AppRcScannerUnknownComponent } from './models/unknown/unknown.component';
 import { AppRcScannerComponent } from './rc-scanner.component';
 import { AppRcScannerService } from './rc-scanner.service';
 
 @NgModule({
     declarations: [
-        AppRcScannerBcd436HpComponent,
+        AppRcScannerBcd386tComponent,
+        AppRcScannerBcd436hpComponent,
         AppRcScannerComponent,
-        AppRcScannerUnsupportedComponent,
+        AppRcScannerUnknownComponent,
     ],
     exports: [AppRcScannerComponent],
-    imports: [
-        CommonModule,
-        FlexModule,
-    ],
+    imports: [CommonModule],
     providers: [AppRcScannerService],
 })
 export class AppRcScannerModule { }
