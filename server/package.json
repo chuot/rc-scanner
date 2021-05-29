@@ -9,7 +9,7 @@
         "naudiodon": "^2.3.4",
         "nodemon": "^2.0.7",
         "serialport": "^9.0.7",
-        "ws": "^7.4.5"
+        "ws": "^7.4.6"
     },
     "devDependencies": {
         "eslint": "^7.26.0",
