@@ -7,6 +7,10 @@ _v0.10.1_
 
 - Client now on angular 12
 
+_v0.10.2_
+
+- Node modules updated for security fixes.
+
 # Version 0.9
 
 - First public beta version.
