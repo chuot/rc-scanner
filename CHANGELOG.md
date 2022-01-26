@@ -11,6 +11,11 @@ _v0.10.2_
 
 - Node modules updated for security fixes.
 
+_v0.10.3_
+
+- Improvements to audio handling on the server side.
+- Node modules updated for security fixes.
+
 # Version 0.9
 
 - First public beta version.
