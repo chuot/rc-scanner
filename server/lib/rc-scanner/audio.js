@@ -27,6 +27,8 @@ export class Audio extends EventEmitter {
         super();
 
         this.config = ctx.config.audio;
+
+        this.start();
     }
 
     start() {
