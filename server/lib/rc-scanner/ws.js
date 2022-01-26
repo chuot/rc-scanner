@@ -31,31 +31,17 @@ export class Ws extends EventEmitter {
 
         this.audio = ctx.audio;
 
-        this.audioCount = 0;
-
         this.audioSocket = new WebSocket.Server({ noServer: true });
 
         this.audioSocket.on('connection', (ws) => {
             const audioHandler = (data) => ws.send(data);
 
-            this.audioCount++;
-
             this.audio.on('data', audioHandler);
-
-            if (this.audioCount === 1) {
-                this.audio.start();
-            }
 
             ws.isAlive = true;
 
             ws.on('close', () => {
-                this.audioCount--;
-
                 this.audio.removeListener('data', audioHandler);
-
-                if (this.audioCount === 0) {
-                    this.audio.stop();
-                }
             });
 
             ws.on('pong', () => ws.isAlive = true);
