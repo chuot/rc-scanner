@@ -7,7 +7,7 @@
         "express": "^4.17.2",
         "helmet": "^4.6.0",
         "naudiodon": "^2.3.6",
-        "nodemon": "^2.0.15",
+        "nodemon": "^2.0.20",
         "serialport": "^9.2.8",
         "ws": "^7.5.2"
     },
